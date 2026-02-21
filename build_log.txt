@@ -1,0 +1,67 @@
+Running Gradle task 'assembleDebug'...                          
+Invalid depfile: D:\MSc_CA\msccasem2\reality_cart\.dart_tool\flutter_build\992b590f6c91608886f464bc3578ef9f\kernel_snapshot_program.d
+Invalid depfile: D:\MSc_CA\msccasem2\reality_cart\.dart_tool\flutter_build\992b590f6c91608886f464bc3578ef9f\kernel_snapshot_program.d
+Error: Couldn't resolve the package 'flutter_facebook_auth' in 'package:flutter_facebook_auth/flutter_facebook_auth.dart'.
+Error: Couldn't resolve the package 'sign_in_with_apple' in 'package:sign_in_with_apple/sign_in_with_apple.dart'.
+lib/openingphase/signup_screen.dart:6:8: Error: Not found: 'package:flutter_facebook_auth/flutter_facebook_auth.dart'
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+       ^
+lib/openingphase/signup_screen.dart:7:8: Error: Not found: 'package:sign_in_with_apple/sign_in_with_apple.dart'
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+       ^
+lib/openingphase/signup_screen.dart:169:28: Error: The getter 'FacebookAuth' isn't defined for the type '_SignupScreenState'.
+ - '_SignupScreenState' is from 'package:reality_cart/openingphase/signup_screen.dart' ('lib/openingphase/signup_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'FacebookAuth'.
+      final result = await FacebookAuth.instance.login();
+                           ^^^^^^^^^^^^
+lib/openingphase/signup_screen.dart:170:28: Error: The getter 'LoginStatus' isn't defined for the type '_SignupScreenState'.
+ - '_SignupScreenState' is from 'package:reality_cart/openingphase/signup_screen.dart' ('lib/openingphase/signup_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'LoginStatus'.
+      if (result.status != LoginStatus.success) return;
+                           ^^^^^^^^^^^
+lib/openingphase/signup_screen.dart:198:37: Error: The getter 'SignInWithApple' isn't defined for the type '_SignupScreenState'.
+ - '_SignupScreenState' is from 'package:reality_cart/openingphase/signup_screen.dart' ('lib/openingphase/signup_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'SignInWithApple'.
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+                                    ^^^^^^^^^^^^^^^
+lib/openingphase/signup_screen.dart:200:11: Error: The getter 'AppleIDAuthorizationScopes' isn't defined for the type '_SignupScreenState'.
+ - '_SignupScreenState' is from 'package:reality_cart/openingphase/signup_screen.dart' ('lib/openingphase/signup_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppleIDAuthorizationScopes'.
+          AppleIDAuthorizationScopes.email,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/openingphase/signup_screen.dart:201:11: Error: The getter 'AppleIDAuthorizationScopes' isn't defined for the type '_SignupScreenState'.
+ - '_SignupScreenState' is from 'package:reality_cart/openingphase/signup_screen.dart' ('lib/openingphase/signup_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppleIDAuthorizationScopes'.
+          AppleIDAuthorizationScopes.fullName,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unhandled exception:
+FileSystemException(uri=org-dartlang-untranslatable-uri:package%3Aflutter_facebook_auth%2Fflutter_facebook_auth.dart; message=StandardFileSystem only supports file:* and data:* URIs)
+#0      StandardFileSystem.entityForUri (package:front_end/src/api_prototype/standard_file_system.dart:45)
+#1      asFileUri (package:vm/kernel_front_end.dart:1008)
+#2      writeDepfile (package:vm/kernel_front_end.dart:1171)
+<asynchronous suspension>
+#3      FrontendCompiler.compile (package:frontend_server/frontend_server.dart:738)
+<asynchronous suspension>
+#4      starter (package:frontend_server/starter.dart:102)
+<asynchronous suspension>
+#5      main (file:///C:/b/s/w/ir/x/w/sdk/pkg/frontend_server/bin/frontend_server_starter.dart:13)
+<asynchronous suspension>
+
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\Software\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 10s
+Running Gradle task 'assembleDebug'...                             11.2s
+Gradle task assembleDebug failed with exit code 1

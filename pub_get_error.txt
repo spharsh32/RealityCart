@@ -1,0 +1,10 @@
+Resolving dependencies...
+Because no versions of firebase_auth match >6.1.4 <7.0.0 and firebase_auth 6.1.4 depends on firebase_core_platform_interface ^6.0.2, firebase_auth ^6.1.4 requires firebase_core_platform_interface ^6.0.2.
+Because firebase_storage >=11.3.0 <12.0.1 depends on firebase_core_platform_interface ^5.0.0 and firebase_storage >=11.2.0 <11.3.0 depends on firebase_core_platform_interface ^4.8.0, firebase_storage >=11.2.0 <12.0.1 requires firebase_core_platform_interface ^4.8.0 or ^5.0.0.
+Thus, firebase_auth ^6.1.4 is incompatible with firebase_storage >=11.2.0 <12.0.1.
+So, because reality_cart depends on both firebase_auth ^6.1.4 and firebase_storage ^11.2.6, version solving failed.
+
+
+You can try the following suggestion to make the pubspec resolve:
+* Try upgrading your constraint on firebase_storage: flutter pub add firebase_storage:^13.0.6
+Failed to update packages.

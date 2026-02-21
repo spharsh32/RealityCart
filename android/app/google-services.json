@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "972665082655",
+    "project_id": "realitycart-a1e3f",
+    "storage_bucket": "realitycart-a1e3f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972665082655:android:871be5307b813a33a2562a",
+        "android_client_info": {
+          "package_name": "com.example.reality_cart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs893C8ibiFzUE8GciEoJA6OlCbkte3Ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
