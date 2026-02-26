@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:reality_cart/user/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reality_cart/services/fcm_service.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -236,7 +237,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Create Account",
+                          AppLocalizations.of(context)!.createAccount,
                           style: theme.textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -244,7 +245,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Sign up to get started!",
+                          AppLocalizations.of(context)!.signUpToGetStarted,
                           style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 10,
                                 color: theme.hintColor,
@@ -259,7 +260,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: "Full Name",
+                      labelText: AppLocalizations.of(context)!.fullName,
                       prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -273,7 +274,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: "Email",
+                      labelText: AppLocalizations.of(context)!.email,
                       prefixIcon: const Icon(Icons.email_outlined),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -287,7 +288,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
-                      labelText: "Phone Number",
+                      labelText: AppLocalizations.of(context)!.phoneNumber,
                       prefixIcon: const Icon(Icons.phone),
                       prefixText: "+91 ",
                       border: OutlineInputBorder(
@@ -303,7 +304,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     obscureText: !_isPasswordVisible,
                     onChanged: checkPasswordStrength,
                     decoration: InputDecoration(
-                      labelText: "Password",
+                      labelText: AppLocalizations.of(context)!.password,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -363,7 +364,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _confirmPasswordController,
                     obscureText: !_isConfirmPasswordVisible,
                     decoration: InputDecoration(
-                      labelText: "Confirm Password",
+                      labelText: AppLocalizations.of(context)!.confirmPassword,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -398,7 +399,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text("Sign Up", style: TextStyle(fontSize: 16)),
+                      child: Text(AppLocalizations.of(context)!.signUp, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -411,7 +412,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           Expanded(child: Divider(color: theme.dividerColor)),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text("Or sign up with", style: TextStyle(color: theme.hintColor)),
+                            child: Text(AppLocalizations.of(context)!.orSignUpWith, style: TextStyle(color: theme.hintColor)),
                           ),
                           Expanded(child: Divider(color: theme.dividerColor)),
                         ],
@@ -431,14 +432,14 @@ class _SignupScreenState extends State<SignupScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Already have an account?"),
+                          Text(AppLocalizations.of(context)!.alreadyHaveAccount),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) => const LoginScreen()),
                               );
                             },
-                            child: Text("Login", style: TextStyle(color: orangeColor)),
+                            child: Text(AppLocalizations.of(context)!.login, style: TextStyle(color: orangeColor)),
                           ),
                         ],
                       ),

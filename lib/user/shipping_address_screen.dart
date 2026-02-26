@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
   const ShippingAddressScreen({super.key});
@@ -16,16 +17,16 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Delete Address"),
-        content: const Text("Are you sure you want to delete this address?"),
+        title: Text(AppLocalizations.of(context)!.deleteAddress),
+        content: Text(AppLocalizations.of(context)!.areYouSureDeleteAddress),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -92,14 +93,14 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        addressId == null ? "Add New Address" : "Edit Address",
+                        addressId == null ? AppLocalizations.of(context)!.addNewAddress : AppLocalizations.of(context)!.editAddress,
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: nameController,
                         decoration: InputDecoration(
-                          labelText: "Name (e.g., Home, Office)",
+                          labelText: AppLocalizations.of(context)!.nameLabel,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         validator: (value) => value == null || value.trim().isEmpty ? 'Please enter a name' : null,
@@ -108,7 +109,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                       TextFormField(
                         controller: addressController,
                         decoration: InputDecoration(
-                          labelText: "Street Address",
+                          labelText: AppLocalizations.of(context)!.streetAddress,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         validator: (value) => value == null || value.trim().isEmpty ? 'Please enter an address' : null,
@@ -120,7 +121,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             child: TextFormField(
                               controller: cityController,
                               decoration: InputDecoration(
-                                labelText: "City",
+                                labelText: AppLocalizations.of(context)!.city,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
@@ -131,7 +132,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             child: TextFormField(
                               controller: stateController,
                               decoration: InputDecoration(
-                                labelText: "State",
+                                labelText: AppLocalizations.of(context)!.state,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               validator: (value) => value == null || value.trim().isEmpty ? 'Required' : null,
@@ -147,7 +148,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: zipController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                labelText: "Zip Code",
+                                labelText: AppLocalizations.of(context)!.zipCode,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               validator: (value) {
@@ -163,7 +164,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: phoneController,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                labelText: "Phone",
+                                labelText: AppLocalizations.of(context)!.phone,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               validator: (value) {
@@ -229,7 +230,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
                         child: isLoading 
                           ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                           : Text(
-                              addressId == null ? "Save Address" : "Update Address",
+                              addressId == null ? AppLocalizations.of(context)!.saveAddress : AppLocalizations.of(context)!.updateAddress,
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                       ),
@@ -255,7 +256,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Shipping Addresses", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.shippingAddresses, style: const TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -281,7 +282,7 @@ class _ShippingAddressScreenState extends State<ShippingAddressScreen> {
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return const Center(child: Text("No saved addresses found"));
+            return Center(child: Text(AppLocalizations.of(context)!.noSavedAddresses));
           }
 
           return ListView.separated(

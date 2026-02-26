@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reality_cart/admin/screens/admin_home_screen.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 import 'package:reality_cart/services/fcm_service.dart';
 import 'package:intl/intl.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminOrderScreen extends StatelessWidget {
   const AdminOrderScreen({super.key});
@@ -12,21 +15,21 @@ class AdminOrderScreen extends StatelessWidget {
       length: 5,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Manage Orders", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          title: Text(AppLocalizations.of(context)!.manageOrders, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           backgroundColor: const Color(0xFFFB8C00),
           iconTheme: const IconThemeData(color: Colors.white),
           elevation: 0,
-          bottom: const TabBar(
+          bottom: TabBar(
             isScrollable: true,
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             tabs: [
-              Tab(text: "All"),
-              Tab(text: "Pending"),
-              Tab(text: "Shipped"),
-              Tab(text: "Delivered"),
-              Tab(text: "Cancelled"),
+              Tab(text: AppLocalizations.of(context)!.all),
+              Tab(text: AppLocalizations.of(context)!.pending),
+              Tab(text: AppLocalizations.of(context)!.shipped),
+              Tab(text: AppLocalizations.of(context)!.delivered),
+              Tab(text: AppLocalizations.of(context)!.cancelled),
             ],
           ),
         ),
@@ -48,18 +51,29 @@ class OrderList extends StatelessWidget {
   final String status;
   const OrderList({super.key, required this.status});
 
+  String _getLocalizedStatus(BuildContext context, String statusKey) {
+    switch (statusKey) {
+      case 'Pending': return AppLocalizations.of(context)!.pending;
+      case 'Processing': return AppLocalizations.of(context)!.processing;
+      case 'Shipped': return AppLocalizations.of(context)!.shipped;
+      case 'Delivered': return AppLocalizations.of(context)!.delivered;
+      case 'Cancelled': return AppLocalizations.of(context)!.cancelled;
+      default: return statusKey;
+    }
+  }
+
   Future<void> _updateOrderStatus(BuildContext context, String orderId, String currentStatus) async {
     final theme = Theme.of(context);
     String? newStatus = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.cardColor,
-        title: const Text("Update Order Status"),
+        title: Text(AppLocalizations.of(context)!.updateOrderStatus),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: ['Processing', 'Shipped', 'Delivered', 'Cancelled'].map((status) {
             return ListTile(
-              title: Text(status),
+              title: Text(_getLocalizedStatus(context, status)),
               onTap: () => Navigator.pop(context, status),
               selected: status == currentStatus,
               selectedColor: const Color(0xFFFB8C00),
@@ -88,13 +102,13 @@ class OrderList extends StatelessWidget {
         }
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Order status updated to $newStatus")),
+            SnackBar(content: Text("${AppLocalizations.of(context)!.orderStatusUpdated}${_getLocalizedStatus(context, newStatus)}")),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error updating status: $e")),
+            SnackBar(content: Text("${AppLocalizations.of(context)!.errorUpdatingStatus}$e")),
           );
         }
       }
@@ -132,7 +146,7 @@ class OrderList extends StatelessWidget {
         if (orders.isEmpty) {
           return Center(
             child: Text(
-              "No $status orders found",
+              AppLocalizations.of(context)!.noOrdersFoundStatus,
               style: TextStyle(color: theme.hintColor),
             ),
           );
@@ -167,7 +181,7 @@ class OrderList extends StatelessWidget {
                     child: const Icon(Icons.shopping_bag, color: Color(0xFFFB8C00)),
                   ),
                   title: Text(
-                    "Order #${orderId.substring(0, 5)}",
+                    "${AppLocalizations.of(context)!.order} #${orderId.substring(0, 5)}",
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
@@ -175,7 +189,7 @@ class OrderList extends StatelessWidget {
                     children: [
                       Text(dateStr, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                       Text(
-                        statusCtx,
+                        _getLocalizedStatus(context, statusCtx),
                         style: TextStyle(
                           color: _getStatusColor(statusCtx),
                           fontWeight: FontWeight.w500,
@@ -193,7 +207,7 @@ class OrderList extends StatelessWidget {
                         children: [
                           Divider(color: theme.dividerColor.withOpacity(0.2)),
                           Text(
-                            "Items:",
+                            AppLocalizations.of(context)!.itemsLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
@@ -204,7 +218,22 @@ class OrderList extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(child: Text("${data['quantity']}x ${data['name']} (${data['size'] ?? 'std'})", style: const TextStyle(fontSize: 13))),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Text("${data['quantity']}x ", style: const TextStyle(fontSize: 13)),
+                                        Expanded(
+                                          child: TranslatedText(
+                                            data['name'] ?? 'Unknown',
+                                            style: const TextStyle(fontSize: 13),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Text(" (${data['size'] ?? 'std'})", style: const TextStyle(fontSize: 13)),
+                                      ],
+                                    ),
+                                  ),
                                   Text("₹${data['price']}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                 ],
                               ),
@@ -215,7 +244,7 @@ class OrderList extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Total Amount:",
+                                AppLocalizations.of(context)!.totalAmountLabel,
                                 style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               Text(
@@ -235,7 +264,7 @@ class OrderList extends StatelessWidget {
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  child: const Text("Update Status"),
+                                  child: Text(AppLocalizations.of(context)!.updateStatusBtn),
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -244,14 +273,14 @@ class OrderList extends StatelessWidget {
                                   onPressed: () {
                                      // TODO: Navigate to Order Detail Screen if complex logic is needed
                                      // For now, this expansion tile serves as detail
-                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Invoice generation coming soon!")));
+                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.invoiceComingSoon)));
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: const BorderSide(color: Color(0xFFFB8C00)),
                                     foregroundColor: const Color(0xFFFB8C00),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  child: const Text("Invoice"),
+                                  child: Text(AppLocalizations.of(context)!.invoiceBtn),
                                 ),
                               ),
                             ],

@@ -17,6 +17,7 @@ import 'package:reality_cart/user/recently_viewed_screen.dart';
 import 'package:reality_cart/user/featured_products_screen.dart';
 import 'package:reality_cart/l10n/app_localizations.dart';
 import 'package:reality_cart/providers/language_provider.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: _currentIndex == 0 ? _buildHomeContent() : _pages[_currentIndex],
       bottomNavigationBar: Container(
@@ -75,11 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.home, "Home", 0),
-            _buildNavItem(Icons.favorite_border, "Wishlist", 1),
-            _buildNavItem(FontAwesomeIcons.wandMagicSparkles, "AI", 2),
-            _buildNavItem(Icons.shopping_cart_outlined, "Cart", 3),
-            _buildNavItem(Icons.person_outline, "Profile", 4),
+            _buildNavItem(Icons.home,'',0),
+            _buildNavItem(Icons.favorite,'', 1),
+            _buildNavItem(FontAwesomeIcons.wandMagicSparkles,'', 2),
+            _buildNavItem(Icons.shopping_cart,'', 3),
+            _buildNavItem(Icons.person,'', 4),
           ],
         ),
       ),
@@ -88,6 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeContent() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -104,10 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.welcomeMessage,
-                          style: TextStyle(
+                          l10n?.welcomeMessage ?? "Welcome back,",
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: theme.textTheme.bodySmall?.color,
+                            color: Colors.grey,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -138,14 +143,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: const Icon(Icons.language, size: 20),
                               ),
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+                              itemBuilder: (BuildContext context) => [
                                 const PopupMenuItem<Locale>(
-                                  value: Locale('en'),
+                                  value: Locale('en', 'US'),
                                   child: Text('English'),
                                 ),
                                 const PopupMenuItem<Locale>(
-                                  value: Locale('hi'),
+                                  value: Locale('hi', 'IN'),
                                   child: Text('हिंदी'),
+                                ),
+                                const PopupMenuItem<Locale>(
+                                  value: Locale('gu', 'IN'),
+                                  child: Text('ગુજરાતી'),
                                 ),
                               ],
                             );
@@ -232,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: IgnorePointer(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.search,
+                          hintText: l10n?.search ?? "Search products...",
                           hintStyle: TextStyle(color: theme.hintColor),
                           icon: Icon(Icons.search, color: theme.hintColor),
                           border: InputBorder.none,
@@ -245,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 25),
 
                 // --- Categories ---
-                _buildSectionHeader("Categories", () {
+                _buildSectionHeader(l10n?.categories ?? "Categories", () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const AllCategoriesScreen()),
@@ -256,18 +265,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildCategoryItem("Electronics", Icons.phone_android),
-                      _buildCategoryItem("Fashion", FontAwesomeIcons.shirt),
-                      _buildCategoryItem("Home", Icons.home_outlined),
-                      _buildCategoryItem("Books", FontAwesomeIcons.bookOpen),
-                      _buildCategoryItem("Toys", FontAwesomeIcons.car),
+                      _buildCategoryItem(l10n?.electronics ?? "Electronics", Icons.phone_android),
+                      _buildCategoryItem(l10n?.fashion ?? "Fashion", FontAwesomeIcons.shirt),
+                      _buildCategoryItem(l10n?.home ?? "Home", Icons.home_outlined),
+                      _buildCategoryItem(l10n?.books ?? "Books", FontAwesomeIcons.bookOpen),
+                      _buildCategoryItem(l10n?.toys ?? "Toys", FontAwesomeIcons.car),
                     ],
                   ),
                 ),
                 const SizedBox(height: 25),
 
                  // --- Recently Viewed ---
-                _buildSectionHeader("Recently Viewed", () {
+                _buildSectionHeader(l10n?.recentlyViewed ?? "Recently Viewed", () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const RecentlyViewedScreen()),
@@ -279,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 25),
 
                 // --- Featured Products ---
-                _buildSectionHeader("Featured Products", () {
+                _buildSectionHeader(l10n?.featuredProducts ?? "Featured Products", () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const FeaturedProductsScreen()),
@@ -346,6 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSectionHeader(String title, VoidCallback onSeeAll) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -359,9 +369,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         TextButton(
           onPressed: onSeeAll,
-          child: const Text(
-            "See All",
-            style: TextStyle(
+          child: Text(
+            l10n?.seeAll ?? "See All",
+            style: const TextStyle(
               color: Color(0xFFFB8C00),
               fontWeight: FontWeight.w600,
             ),
@@ -436,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             firstImage,
                             fit: BoxFit.contain,
                           )
-                        : Icon(Icons.image_not_supported, color: theme.disabledColor, size: 40),
+                        : Icon(Icons.image, color: theme.disabledColor, size: 40),
                   ),
                   Positioned(
                     top: 8,
@@ -463,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -473,47 +483,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        TranslatedText(
                           data['name'] ?? 'Product Name',
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                            color: theme.textTheme.titleMedium?.color,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: theme.textTheme.titleMedium?.color),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           "₹${data['price'] ?? '0.00'}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFFFB8C00),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.textTheme.bodySmall?.color,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Row(
-                            children: [
-                              Text("4.5", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                              SizedBox(width: 2),
-                              Icon(Icons.star, size: 10, color: Colors.white),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text("(120)", style: TextStyle(fontSize: 10, color: theme.hintColor)),
-                      ],
-                    )
+                    if (width == null) // Show rating only in grid or larger cards
+                     Row(
+                       children: [
+                         const Icon(Icons.star, size: 12, color: Colors.amber),
+                         const SizedBox(width: 4),
+                         Text("4.5", style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color)),
+                       ],
+                     )
                   ],
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/theme_provider.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -67,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool confirmPasswordVisible = false;
 
     double passwordStrength = 0;
-    String strengthText = "Enter Password";
+    String strengthText = AppLocalizations.of(context)!.enterOldPassword;
     Color strengthColor = Colors.grey;
 
     showDialog(
@@ -136,14 +137,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         controller: oldPasswordController,
                         obscureText: !oldPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: "Old Password",
+                          labelText: AppLocalizations.of(context)!.oldPassword,
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(oldPasswordVisible ? Icons.visibility : Icons.visibility_off),
                             onPressed: () => setDialogState(() => oldPasswordVisible = !oldPasswordVisible),
                           ),
                         ),
-                        validator: (value) => (value == null || value.isEmpty) ? "Enter old password" : null,
+                        validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.enterOldPassword : null,
                       ),
                       const SizedBox(height: 15),
                       TextFormField(
@@ -151,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         obscureText: !newPasswordVisible,
                         onChanged: checkPasswordStrength,
                         decoration: InputDecoration(
-                          labelText: "New Password",
+                          labelText: AppLocalizations.of(context)!.newPassword,
                           prefixIcon: const Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(newPasswordVisible ? Icons.visibility : Icons.visibility_off),
@@ -159,8 +160,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) return "Enter new password";
-                          if (value.length < 8) return "Minimum 8 characters required";
+                          if (value == null || value.isEmpty) return AppLocalizations.of(context)!.enterNewPassword;
+                          if (value.length < 8) return AppLocalizations.of(context)!.minimum8CharactersRequired;
                           return null;
                         },
                       ),
@@ -186,14 +187,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         controller: confirmPasswordController,
                         obscureText: !confirmPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: "Confirm Password",
+                          labelText: AppLocalizations.of(context)!.confirmPassword,
                           prefixIcon: const Icon(Icons.lock_reset),
                           suffixIcon: IconButton(
                             icon: Icon(confirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
                             onPressed: () => setDialogState(() => confirmPasswordVisible = !confirmPasswordVisible),
                           ),
                         ),
-                        validator: (value) => value != newPasswordController.text ? "Passwords do not match" : null,
+                        validator: (value) => value != newPasswordController.text ? AppLocalizations.of(context)!.passwordsDoNotMatch : null,
                       ),
                     ],
                   ),
@@ -207,7 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     confirmPasswordController.dispose();
                     Navigator.pop(context);
                   },
-                  child: const Text("Cancel"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -222,11 +223,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         if (mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Password updated successfully!")),
+                            SnackBar(content: Text(AppLocalizations.of(context)!.passwordUpdatedSuccessfully)),
                           );
                         }
                       } on FirebaseAuthException catch (e) {
-                        String message = "Update failed";
+                        String message = AppLocalizations.of(context)!.updateFailed;
                         if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
                           message = "Incorrect old password";
                         } else if (e.message != null) {
@@ -242,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }
                     }
                   },
-                  child: const Text("Update"),
+                  child: Text(AppLocalizations.of(context)!.update),
                 ),
               ],
             );
@@ -263,7 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.settings, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -276,9 +277,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-              child: Text("General", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Text(AppLocalizations.of(context)!.general, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -293,7 +294,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   SwitchListTile(
                     activeColor: const Color(0xFFFB8C00),
-                    title: const Text("Push Notifications"),
+                    title: Text(AppLocalizations.of(context)!.pushNotifications),
                     value: _pushNotifications,
                     onChanged: (value) {
                       setState(() => _pushNotifications = value);
@@ -302,8 +303,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    title: const Text("Theme Mode"),
-                    subtitle: Text(_getThemeName(themeProvider.themeMode)),
+                    title: Text(AppLocalizations.of(context)!.themeMode),
+                    subtitle: Text(_getThemeName(themeProvider.themeMode, context)),
                     trailing: DropdownButton<ThemeMode>(
                       underline: const SizedBox(),
                       value: themeProvider.themeMode,
@@ -318,19 +319,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                         }
                       },
-                      items: const [
-                        DropdownMenuItem(value: ThemeMode.system, child: Text("System")),
-                        DropdownMenuItem(value: ThemeMode.light, child: Text("Light")),
-                        DropdownMenuItem(value: ThemeMode.dark, child: Text("Dark")),
+                      items: [
+                        DropdownMenuItem(value: ThemeMode.system, child: Text(AppLocalizations.of(context)!.system)),
+                        DropdownMenuItem(value: ThemeMode.light, child: Text(AppLocalizations.of(context)!.light)),
+                        DropdownMenuItem(value: ThemeMode.dark, child: Text(AppLocalizations.of(context)!.dark)),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
-              child: Text("Account", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
+              child: Text(AppLocalizations.of(context)!.account, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -345,8 +346,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.lock_outline, color: Colors.grey),
-                    title: const Text("Change Password"),
-                    subtitle: const Text("Verify old password to update"),
+                    title: Text(AppLocalizations.of(context)!.changePassword),
+                    subtitle: Text(AppLocalizations.of(context)!.verifyOldPasswordToUpdate),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _changePassword,
                   ),
@@ -365,11 +366,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _getThemeName(ThemeMode mode) {
+  String _getThemeName(ThemeMode mode, BuildContext context) {
     switch (mode) {
-      case ThemeMode.system: return "System Default";
-      case ThemeMode.light: return "Light Mode";
-      case ThemeMode.dark: return "Dark Mode";
+      case ThemeMode.system: return "${AppLocalizations.of(context)!.system} Default";
+      case ThemeMode.light: return "${AppLocalizations.of(context)!.light} Mode";
+      case ThemeMode.dark: return "${AppLocalizations.of(context)!.dark} Mode";
     }
   }
 }

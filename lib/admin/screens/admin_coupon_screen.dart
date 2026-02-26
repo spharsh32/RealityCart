@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminCouponScreen extends StatefulWidget {
   const AdminCouponScreen({super.key});
@@ -25,7 +26,7 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
         builder: (context, setState) {
           return AlertDialog(
             backgroundColor: Theme.of(context).cardColor,
-            title: Text(docId == null ? "Add Coupon" : "Edit Coupon"),
+            title: Text(docId == null ? AppLocalizations.of(context)!.addCoupon : AppLocalizations.of(context)!.editCoupon),
             content: SingleChildScrollView(
               child: Form(
                 key: formKey,
@@ -34,17 +35,17 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
                   children: [
                     TextFormField(
                       controller: codeController,
-                      decoration: const InputDecoration(labelText: "Coupon Code"),
-                      validator: (val) => val!.isEmpty ? "Required" : null,
+                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.couponCode),
+                      validator: (val) => val!.isEmpty ? AppLocalizations.of(context)!.requiredField : null,
                     ),
                     Row(
                       children: [
                         Expanded(
                           child: TextFormField(
                             controller: discountController,
-                            decoration: const InputDecoration(labelText: "Discount"),
+                            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.discountTitle),
                             keyboardType: TextInputType.number,
-                            validator: (val) => val!.isEmpty ? "Required" : null,
+                            validator: (val) => val!.isEmpty ? AppLocalizations.of(context)!.requiredField : null,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -60,12 +61,12 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
                     ),
                     TextFormField(
                       controller: minOrderController,
-                      decoration: const InputDecoration(labelText: "Min Order Amount"),
+                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.minOrderAmount),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 10),
                     ListTile(
-                      title: Text(expiryDate == null ? "Select Expiry Date" : "Expires: ${DateFormat('MMM dd, yyyy').format(expiryDate!)}"),
+                      title: Text(expiryDate == null ? AppLocalizations.of(context)!.selectExpiryDate : "${AppLocalizations.of(context)!.expiresLabel}${DateFormat('MMM dd, yyyy').format(expiryDate!)}"),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: () async {
                         final picked = await showDatePicker(
@@ -82,7 +83,7 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.cancel)),
               ElevatedButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
@@ -104,7 +105,7 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
                     if (mounted) Navigator.pop(context);
                   }
                 },
-                child: const Text("Save"),
+                child: Text(AppLocalizations.of(context)!.save),
               ),
             ],
           );
@@ -124,7 +125,7 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Manage Coupons", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.manageCoupons, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -136,12 +137,12 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('coupons').orderBy('createdAt', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Center(child: Text("Error: ${snapshot.error}"));
+          if (snapshot.hasError) return Center(child: Text("${AppLocalizations.of(context)!.errorMsg}${snapshot.error}"));
           if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
 
           final coupons = snapshot.data?.docs ?? [];
 
-          if (coupons.isEmpty) return const Center(child: Text("No coupons found"));
+          if (coupons.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noCouponsFound));
 
           return ListView.builder(
             padding: const EdgeInsets.all(15),
@@ -162,12 +163,15 @@ class _AdminCouponScreenState extends State<AdminCouponScreen> {
                     child: const Icon(Icons.local_offer, color: Colors.teal),
                   ),
                   title: Text(data['code'] ?? 'CODE', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text("${data['type'] == 'percentage' ? '${data['discountAmount']}%' : '₹${data['discountAmount']}'} off • Min Order: ₹${data['minOrderAmount']}"),
+                  subtitle: Text(AppLocalizations.of(context)!.couponSubtitle(
+                    data['type'] == 'percentage' ? '${data['discountAmount']}%' : '₹${data['discountAmount']}', 
+                    data['minOrderAmount'].toString()
+                  )),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                        if (isExpired) 
-                         const Chip(label: Text("Expired", style: TextStyle(fontSize: 10, color: Colors.white)), backgroundColor: Colors.red)
+                         Chip(label: Text(AppLocalizations.of(context)!.expired, style: const TextStyle(fontSize: 10, color: Colors.white)), backgroundColor: Colors.red)
                        else 
                          Switch(
                            value: isActive, 

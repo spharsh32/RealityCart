@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminUserScreen extends StatelessWidget {
   const AdminUserScreen({super.key});
@@ -13,12 +14,12 @@ class AdminUserScreen extends StatelessWidget {
       });
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(currentStatus ? "User unblocked" : "User blocked")),
+          SnackBar(content: Text(currentStatus ? AppLocalizations.of(context)!.userUnblocked : AppLocalizations.of(context)!.userBlocked)),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${AppLocalizations.of(context)!.errorMsg}$e")));
       }
     }
   }
@@ -27,11 +28,11 @@ class AdminUserScreen extends StatelessWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Delete User"),
-        content: const Text("Are you sure? This cannot be undone."),
+        title: Text(AppLocalizations.of(context)!.deleteUser),
+        content: Text(AppLocalizations.of(context)!.areYouSureCannotBeUndone),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete", style: TextStyle(color: Colors.red))),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context)!.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red))),
         ],
       ),
     );
@@ -40,11 +41,11 @@ class AdminUserScreen extends StatelessWidget {
       try {
         await FirebaseFirestore.instance.collection('users').doc(userId).delete();
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User deleted")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.userDeleted)));
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${AppLocalizations.of(context)!.errorMsg}$e")));
         }
       }
     }
@@ -57,7 +58,7 @@ class AdminUserScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Manage Users", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.manageUsers, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFAB47BC), // Different color for User section
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -65,12 +66,12 @@ class AdminUserScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').orderBy('createdAt', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Center(child: Text("Error: ${snapshot.error}"));
+          if (snapshot.hasError) return Center(child: Text("${AppLocalizations.of(context)!.errorMsg}${snapshot.error}"));
           if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
 
           final users = snapshot.data?.docs ?? [];
 
-          if (users.isEmpty) return const Center(child: Text("No users found"));
+          if (users.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noUsersFound));
 
           return ListView.builder(
             padding: const EdgeInsets.all(15),
@@ -79,8 +80,8 @@ class AdminUserScreen extends StatelessWidget {
               final userDoc = users[index];
               final userData = userDoc.data() as Map<String, dynamic>;
               final userId = userDoc.id;
-              final email = userData['email'] ?? 'No Email';
-              final name = userData['name'] ?? 'No Name';
+              final email = userData['email'] ?? AppLocalizations.of(context)!.noEmail;
+              final name = userData['name'] ?? AppLocalizations.of(context)!.noName;
               final isBlocked = userData['isBlocked'] ?? false;
               final createdAt = userData['createdAt'] as Timestamp?;
               final dateStr = createdAt != null ? DateFormat('MMM dd, yyyy').format(createdAt.toDate()) : 'N/A';
@@ -103,7 +104,7 @@ class AdminUserScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(email, style: const TextStyle(fontSize: 12)),
-                      Text("Joined: $dateStr", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                      Text("${AppLocalizations.of(context)!.joinedLabel}$dateStr", style: const TextStyle(fontSize: 10, color: Colors.grey)),
                     ],
                   ),
                   trailing: PopupMenuButton<String>(
@@ -112,25 +113,25 @@ class AdminUserScreen extends StatelessWidget {
                       if (value == 'delete') _deleteUser(context, userId);
                       if (value == 'history') {
                          // Simplify: Show snackbar or implement history view later
-                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Order History View Coming Soon")));
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.orderHistoryComingSoon)));
                       }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
                         value: 'history',
-                        child: Row(children: const [Icon(Icons.history, size: 18), SizedBox(width: 10), Text('Order History')]),
+                        child: Row(children: [const Icon(Icons.history, size: 18), const SizedBox(width: 10), Text(AppLocalizations.of(context)!.orderHistory)]),
                       ),
                        PopupMenuItem<String>(
                         value: 'block',
                         child: Row(children: [
                           Icon(isBlocked ? Icons.check_circle : Icons.block, color: isBlocked ? Colors.green : Colors.orange, size: 18), 
                           const SizedBox(width: 10), 
-                          Text(isBlocked ? 'Unblock User' : 'Block User')
+                          Text(isBlocked ? AppLocalizations.of(context)!.unblockUser : AppLocalizations.of(context)!.blockUser)
                         ]),
                       ),
-                      const PopupMenuItem<String>(
+                      PopupMenuItem<String>(
                         value: 'delete',
-                        child: Row(children: [Icon(Icons.delete, color: Colors.red, size: 18), SizedBox(width: 10), Text('Delete Account', style: TextStyle(color: Colors.red))]),
+                        child: Row(children: [const Icon(Icons.delete, color: Colors.red, size: 18), const SizedBox(width: 10), Text(AppLocalizations.of(context)!.deleteAccount, style: const TextStyle(color: Colors.red))]),
                       ),
                     ],
                   ),

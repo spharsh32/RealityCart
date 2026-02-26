@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
   const PaymentMethodScreen({super.key});
@@ -17,16 +18,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Remove Card"),
-        content: const Text("Are you sure you want to remove this payment method?"),
+        title: Text(AppLocalizations.of(context)!.removeCard),
+        content: Text(AppLocalizations.of(context)!.areYouSureRemoveCard),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Remove", style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.remove, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -91,7 +92,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        isEditing ? "Edit Card" : "Add New Card",
+                        isEditing ? AppLocalizations.of(context)!.editCard : AppLocalizations.of(context)!.addNewCard,
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color),
                       ),
                       const SizedBox(height: 20),
@@ -103,7 +104,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                           LengthLimitingTextInputFormatter(16),
                         ],
                         decoration: InputDecoration(
-                          labelText: "Card Number",
+                          labelText: AppLocalizations.of(context)!.cardNumber,
                           prefixIcon: const Icon(Icons.credit_card),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -126,7 +127,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                 CardExpiryInputFormatter(),
                               ],
                               decoration: InputDecoration(
-                                labelText: "Expiry (MM/YY)",
+                                labelText: AppLocalizations.of(context)!.expiryLabel,
                                 hintText: "MM/YY",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -185,7 +186,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                 LengthLimitingTextInputFormatter(3),
                               ],
                               decoration: InputDecoration(
-                                labelText: "CVV",
+                                labelText: AppLocalizations.of(context)!.cvv,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               validator: (value) {
@@ -201,7 +202,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       TextFormField(
                         controller: nameController,
                         decoration: InputDecoration(
-                          labelText: "Cardholder Name",
+                          labelText: AppLocalizations.of(context)!.cardholderName,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         validator: (value) {
@@ -263,7 +264,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                         ),
                         child: isLoading 
                           ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text(isEditing ? "Update Card" : "Save Card", style: const TextStyle(fontWeight: FontWeight.bold)),
+                          : Text(isEditing ? AppLocalizations.of(context)!.updateCard : AppLocalizations.of(context)!.saveCard, style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -287,7 +288,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Payment Methods", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.paymentMethods, style: const TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -313,7 +314,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return const Center(child: Text("No payment methods found"));
+            return Center(child: Text(AppLocalizations.of(context)!.noPaymentMethods));
           }
 
           return ListView.separated(

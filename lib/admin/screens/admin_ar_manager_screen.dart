@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminARManagerScreen extends StatelessWidget {
   const AdminARManagerScreen({super.key});
@@ -11,7 +12,7 @@ class AdminARManagerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("AR Asset Manager", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.arAssetManager, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFB8C00),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -81,12 +82,12 @@ class AdminARManagerScreen extends StatelessWidget {
         onPressed: () {
           // TODO: Implement Upload Logic
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Upload functionality coming soon!")),
+            SnackBar(content: Text(AppLocalizations.of(context)!.uploadComingSoon)),
           );
         },
         backgroundColor: const Color(0xFFFB8C00),
         icon: const Icon(Icons.upload_file, color: Colors.white),
-        label: const Text("Upload Asset", style: TextStyle(color: Colors.white)),
+        label: Text(AppLocalizations.of(context)!.uploadAsset, style: const TextStyle(color: Colors.white)),
       ),
     );
   }

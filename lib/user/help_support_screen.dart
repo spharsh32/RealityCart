@@ -1,27 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
-
-  final List<Map<String, String>> _faqs = const [
-    {
-      "question": "How do I track my order?",
-      "answer": "You can track your order by going to the 'My Orders' section in your profile and selecting the order you want to track."
-    },
-    {
-      "question": "What is the return policy?",
-      "answer": "We offer a 30-day return policy for all unused items in their original packaging. Please contact support to initiate a return."
-    },
-    {
-      "question": "How can I change my shipping address?",
-      "answer": "You can manage your shipping addresses in the 'Shipping Addresses' section of your profile."
-    },
-    {
-      "question": "Do you offer international shipping?",
-      "answer": "Yes, we ship to select international destinations. Shipping costs and times vary by location."
-    },
-  ];
 
   Future<void> _contactSupport(BuildContext context, String method) async {
     Uri? uri;
@@ -43,7 +26,7 @@ class HelpSupportScreen extends StatelessWidget {
       }
     } else if (method == "Chat") {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Live Chat feature coming soon!")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.liveChatComingSoon)),
       );
     }
   }
@@ -51,9 +34,28 @@ class HelpSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final faqs = [
+      {
+        "question": AppLocalizations.of(context)!.faq1Question,
+        "answer": AppLocalizations.of(context)!.faq1Answer
+      },
+      {
+        "question": AppLocalizations.of(context)!.faq2Question,
+        "answer": AppLocalizations.of(context)!.faq2Answer
+      },
+      {
+        "question": AppLocalizations.of(context)!.faq3Question,
+        "answer": AppLocalizations.of(context)!.faq3Answer
+      },
+      {
+        "question": AppLocalizations.of(context)!.faq4Question,
+        "answer": AppLocalizations.of(context)!.faq4Answer
+      },
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Help & Support", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.helpAndSupport, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -67,7 +69,7 @@ class HelpSupportScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20),
               child: Text(
-                "Frequently Asked Questions",
+                AppLocalizations.of(context)!.frequentlyAskedQuestions,
                 style: TextStyle(
                   fontSize: 18, 
                   fontWeight: FontWeight.bold,
@@ -75,7 +77,7 @@ class HelpSupportScreen extends StatelessWidget {
                 ),
               ),
             ),
-            ..._faqs.map((faq) => Container(
+            ...faqs.map((faq) => Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               decoration: BoxDecoration(
                 color: theme.cardColor,
@@ -91,7 +93,7 @@ class HelpSupportScreen extends StatelessWidget {
               child: ExpansionTile(
                 iconColor: const Color(0xFFFB8C00),
                 collapsedIconColor: theme.disabledColor,
-                title: Text(
+                title: TranslatedText(
                   faq['question']!,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
@@ -101,7 +103,7 @@ class HelpSupportScreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Text(
+                    child: TranslatedText(
                       faq['answer']!,
                       style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7)),
                     ),
@@ -112,7 +114,7 @@ class HelpSupportScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
               child: Text(
-                "Contact Us",
+                AppLocalizations.of(context)!.contactUs,
                 style: TextStyle(
                   fontSize: 18, 
                   fontWeight: FontWeight.bold,
@@ -138,7 +140,7 @@ class HelpSupportScreen extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.email_outlined, color: Color(0xFFFB8C00)),
                     title: Text(
-                      "Email Support",
+                      AppLocalizations.of(context)!.emailSupport,
                       style: TextStyle(color: theme.textTheme.titleMedium?.color),
                     ),
                     subtitle: Text(
@@ -152,7 +154,7 @@ class HelpSupportScreen extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.phone_outlined, color: Color(0xFFFB8C00)),
                     title: Text(
-                      "Call Us",
+                      AppLocalizations.of(context)!.callUs,
                       style: TextStyle(color: theme.textTheme.titleMedium?.color),
                     ),
                     subtitle: Text(

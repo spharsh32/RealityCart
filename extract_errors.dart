@@ -1,0 +1,1 @@
+import "dart:io"; void main() { final lines = File("analysis_results_reverted_2.txt").readAsLinesSync(); final errors = <String>[]; for(final line in lines) { if (line.contains("error -")) errors.add(line); } print("Errors found: ${errors.length}"); for (int i = 0; i < (errors.length > 20 ? 20 : errors.length); i++) print(errors[i]); }

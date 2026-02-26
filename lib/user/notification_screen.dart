@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -20,18 +22,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     const brandOrange = Color(0xFFFB8C00);
 
     if (_user == null) {
-      return const Scaffold(body: Center(child: Text("Please login to see notifications")));
+      return Scaffold(body: Center(child: Text(AppLocalizations.of(context)!.pleaseLoginToSeeNotifications)));
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notifications", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.notifications, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: brandOrange,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.done_all, color: Colors.white),
-            tooltip: "Mark all as read",
+            tooltip: AppLocalizations.of(context)!.markAllAsRead,
             onPressed: () async {
               final batch = FirebaseFirestore.instance.batch();
               final snapshots = await FirebaseFirestore.instance
@@ -93,7 +95,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     children: [
                       Icon(Icons.notifications_off_outlined, size: 80, color: theme.disabledColor.withOpacity(0.2)),
                       const SizedBox(height: 10),
-                      Text("No Notifications", style: TextStyle(color: theme.hintColor, fontSize: 18)),
+                      Text(AppLocalizations.of(context)!.noNotifications, style: TextStyle(color: theme.hintColor, fontSize: 18)),
                     ],
                   ),
                 );
@@ -138,7 +140,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     },
                     confirmDismiss: (direction) async {
                       if (isGlobal) {
-                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot delete global announcements")));
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.cannotDeleteGlobalAnnouncements)));
                          return false;
                       }
                       return true;
@@ -171,7 +173,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 5),
-                            Text(data['body'] ?? ""),
+                            TranslatedText(data['body'] ?? ""),
                             const SizedBox(height: 5),
                             Text(
                               data['createdAt'] != null 

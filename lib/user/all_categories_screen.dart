@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reality_cart/user/search_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class AllCategoriesScreen extends StatelessWidget {
   const AllCategoriesScreen({super.key});
-
-  final List<Map<String, dynamic>> _categories = const [
-    {"name": "Electronics", "icon": Icons.phone_android, "color": Colors.blue},
-    {"name": "Fashion", "icon": FontAwesomeIcons.shirt, "color": Colors.pink},
-    {"name": "Home", "icon": Icons.home_outlined, "color": Colors.brown},
-    {"name": "Books", "icon": FontAwesomeIcons.bookOpen, "color": Colors.green},
-    {"name": "Toys", "icon": FontAwesomeIcons.car, "color": Colors.red},
-    {"name": "Beauty", "icon": Icons.face_retouching_natural, "color": Colors.purple},
-    {"name": "Sports", "icon": Icons.sports_basketball, "color": Colors.orange},
-    {"name": "Grocery", "icon": Icons.local_grocery_store, "color": Colors.teal},
-    {"name": "Automotive", "icon": Icons.directions_car, "color": Colors.blueGrey},
-  ];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const brandOrange = Color(0xFFFB8C00);
 
+    final List<Map<String, dynamic>> _categories = [
+      {"name": "Electronics", "icon": Icons.phone_android, "color": Colors.blue},
+      {"name": "Fashion", "icon": FontAwesomeIcons.shirt, "color": Colors.pink},
+      {"name": "Home", "icon": Icons.home_outlined, "color": Colors.brown},
+      {"name": "Books", "icon": FontAwesomeIcons.bookOpen, "color": Colors.green},
+      {"name": "Toys", "icon": FontAwesomeIcons.car, "color": Colors.red},
+      {"name": "Beauty", "icon": Icons.face_retouching_natural, "color": Colors.purple},
+      {"name": "Sports", "icon": Icons.sports_basketball, "color": Colors.orange},
+      {"name": "Grocery", "icon": Icons.local_grocery_store, "color": Colors.teal},
+      {"name": "Automotive", "icon": Icons.directions_car, "color": Colors.blueGrey},
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("All Categories", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.allCategories, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: GridView.builder(
@@ -66,7 +68,7 @@ class AllCategoriesScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                TranslatedText(
                   category['name'],
                   style: TextStyle(
                     fontSize: 12,

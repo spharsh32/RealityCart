@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reality_cart/user/product_detail_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -29,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: "Search products...",
+            hintText: AppLocalizations.of(context)!.searchProducts,
             border: InputBorder.none,
             hintStyle: TextStyle(color: theme.hintColor),
             suffixIcon: _searchQuery.isNotEmpty 
@@ -60,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   Icon(Icons.search, size: 80, color: theme.disabledColor.withOpacity(0.2)),
                   const SizedBox(height: 16),
                   Text(
-                    "Search for your favorite products",
+                    AppLocalizations.of(context)!.searchForFavoriteProducts,
                     style: TextStyle(color: theme.hintColor, fontSize: 16),
                   ),
                 ],
@@ -70,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
               stream: FirebaseFirestore.instance.collection('products').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(child: Text("Something went wrong"));
+                  return Center(child: Text(AppLocalizations.of(context)!.somethingWentWrong));
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -91,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         Icon(Icons.search_off, size: 60, color: theme.disabledColor),
                         const SizedBox(height: 10),
                         Text(
-                          "No results found for '$_searchQuery'",
+                          "${AppLocalizations.of(context)!.noResultsFoundFor} '$_searchQuery'",
                           style: TextStyle(color: theme.textTheme.bodyMedium?.color),
                         ),
                       ],
@@ -175,8 +177,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          data['name'] ?? 'Product Name',
+                        TranslatedText(
+                          data['name'] ?? AppLocalizations.of(context)!.productName,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

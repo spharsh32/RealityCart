@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reality_cart/admin/screens/add_product_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminProductScreen extends StatelessWidget {
   const AdminProductScreen({super.key});
@@ -11,16 +12,16 @@ class AdminProductScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.dialogBackgroundColor,
-        title: const Text("Delete Product"),
-        content: const Text("Are you sure you want to delete this product?"),
+        title: Text(AppLocalizations.of(context)!.deleteProduct),
+        content: Text(AppLocalizations.of(context)!.areYouSureDeleteProduct),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -31,13 +32,13 @@ class AdminProductScreen extends StatelessWidget {
         await FirebaseFirestore.instance.collection('products').doc(productId).delete();
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Product deleted successfully")),
+            SnackBar(content: Text(AppLocalizations.of(context)!.productDeletedSuccessfully)),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error deleting product: $e")),
+            SnackBar(content: Text("${AppLocalizations.of(context)!.errorDeletingProduct}: $e")),
           );
         }
       }
@@ -51,7 +52,7 @@ class AdminProductScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Manage Products", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.manageProducts, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFB8C00),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -63,7 +64,7 @@ class AdminProductScreen extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}", style: TextStyle(color: theme.textTheme.bodyMedium?.color)));
+            return Center(child: Text("${AppLocalizations.of(context)!.errorMsg}${snapshot.error}", style: TextStyle(color: theme.textTheme.bodyMedium?.color)));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -74,7 +75,7 @@ class AdminProductScreen extends StatelessWidget {
           if (products.isEmpty) {
             return Center(
               child: Text(
-                "No products found. Add some!",
+                AppLocalizations.of(context)!.noProductsFound,
                 style: TextStyle(color: theme.hintColor),
               ),
             );
@@ -129,7 +130,7 @@ class AdminProductScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              product['name'] ?? 'No Name',
+                              product['name'] ?? AppLocalizations.of(context)!.noName,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold, 
                                 fontSize: 16,
@@ -138,7 +139,7 @@ class AdminProductScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              "Category: ${product['category'] ?? 'N/A'}",
+                              "${AppLocalizations.of(context)!.categoryLabel}: ${product['category'] ?? 'N/A'}",
                               style: TextStyle(color: theme.textTheme.bodySmall?.color, fontSize: 12),
                             ),
                             const SizedBox(height: 5),

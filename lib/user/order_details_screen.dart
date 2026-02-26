@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
@@ -27,7 +30,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.orderDetails, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -42,7 +45,7 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "Status: $status",
+                    "${AppLocalizations.of(context)!.status}: $status",
                     style: TextStyle(
                       color: _getStatusColor(status),
                       fontWeight: FontWeight.bold,
@@ -51,7 +54,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Order ID: #${orderId.toUpperCase()}",
+                    "${AppLocalizations.of(context)!.orderId}: #${orderId.toUpperCase()}",
                     style: TextStyle(color: theme.textTheme.bodySmall?.color),
                   ),
                 ],
@@ -63,13 +66,13 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle(context, "Order Information"),
-                  _buildInfoRow(context, "Date", formattedDate),
-                  _buildInfoRow(context, "Payment", orderData['paymentMethod'] ?? "N/A"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.orderInformation),
+                  _buildInfoRow(context, AppLocalizations.of(context)!.date, formattedDate),
+                  _buildInfoRow(context, AppLocalizations.of(context)!.payment, orderData['paymentMethod'] ?? "N/A"),
                   
                   const Divider(height: 40),
                   
-                  _buildSectionTitle(context, "Shipping Address"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.shippingAddress),
                   FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance
                         .collection('users')
@@ -91,7 +94,7 @@ class OrderDetailsScreen extends StatelessWidget {
                           Text(addr['name'] ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
                           Text("${addr['address']}, ${addr['city']}"),
                           Text("${addr['state']} - ${addr['zip']}"),
-                          Text("Phone: ${addr['phone']}"),
+                          Text("${AppLocalizations.of(context)!.phone}: ${addr['phone']}"),
                         ],
                       );
                     },
@@ -99,7 +102,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
                   const Divider(height: 40),
 
-                  _buildSectionTitle(context, "Items"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.items),
                   ...items.map((item) {
                     final data = item as Map<String, dynamic>;
                     return Padding(
@@ -119,8 +122,8 @@ class OrderDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(data['name'] ?? "", style: const TextStyle(fontWeight: FontWeight.w500)),
-                                Text("Qty: ${data['quantity']} | Size: ${data['size']}", style: TextStyle(color: theme.hintColor, fontSize: 12)),
+                                TranslatedText(data['name'] ?? "", style: const TextStyle(fontWeight: FontWeight.w500)),
+                                Text("${AppLocalizations.of(context)!.qty}: ${data['quantity']} | ${AppLocalizations.of(context)!.size}: ${data['size']}", style: TextStyle(color: theme.hintColor, fontSize: 12)),
                               ],
                             ),
                           ),
@@ -132,15 +135,15 @@ class OrderDetailsScreen extends StatelessWidget {
 
                   const Divider(height: 40),
 
-                  _buildSectionTitle(context, "Price Details"),
-                  _buildPriceRow("Price Summary", "₹${(totalAmount / 1.05).toStringAsFixed(2)}"),
-                  _buildPriceRow("Tax (5%)", "₹${(totalAmount - (totalAmount / 1.05)).toStringAsFixed(2)}"),
-                  _buildPriceRow("Delivery Fee", "FREE", isFree: true),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.priceDetails),
+                  _buildPriceRow(AppLocalizations.of(context)!.priceSummary, "₹${(totalAmount / 1.05).toStringAsFixed(2)}"),
+                  _buildPriceRow("${AppLocalizations.of(context)!.tax} (5%)", "₹${(totalAmount - (totalAmount / 1.05)).toStringAsFixed(2)}"),
+                  _buildPriceRow(AppLocalizations.of(context)!.deliveryFee, AppLocalizations.of(context)!.freeDelivery, isFree: true),
                   const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Total Amount", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text(AppLocalizations.of(context)!.totalAmount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                       Text("₹${totalAmount.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFFB8C00))),
                     ],
                   ),

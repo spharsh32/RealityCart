@@ -7,6 +7,8 @@ import 'package:reality_cart/user/order_payment_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/cart_item.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItem>? checkoutItems;
@@ -42,7 +44,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Order Summary", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text(AppLocalizations.of(context)!.orderSummary, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -69,7 +71,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("${_items.length} Items", style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text("${_items.length} ${AppLocalizations.of(context)!.items}", style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           ..._items.map((item) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -88,8 +90,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.name, style: const TextStyle(fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
-                      Text("Qty: ${item.quantity} | Size: ${item.size}", style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      TranslatedText(item.name, style: const TextStyle(fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text("${AppLocalizations.of(context)!.qty}: ${item.quantity} | ${AppLocalizations.of(context)!.size}: ${item.size}", style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       Text("₹${item.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -123,15 +125,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Deliver to:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.deliverTo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ShippingAddressScreen())),
-                    child: Text(hasAddress ? "Change" : "Add Address", style: const TextStyle(color: Color(0xFFFB8C00))),
+                    child: Text(hasAddress ? AppLocalizations.of(context)!.change : AppLocalizations.of(context)!.addAddress, style: const TextStyle(color: Color(0xFFFB8C00))),
                   ),
                 ],
               ),
               if (!hasAddress)
-                const Text("No address saved yet.", style: TextStyle(color: Colors.grey))
+                Text(AppLocalizations.of(context)!.noAddressSaved, style: const TextStyle(color: Colors.grey))
               else
                 ...docs.map((doc) {
                   final data = doc.data() as Map<String, dynamic>;
@@ -167,7 +169,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("₹${_total.toStringAsFixed(2)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const Text("Order Summary", style: TextStyle(color: Color(0xFFFB8C00), fontSize: 12, fontWeight: FontWeight.w500)),
+              Text(AppLocalizations.of(context)!.orderSummary, style: const TextStyle(color: Color(0xFFFB8C00), fontSize: 12, fontWeight: FontWeight.w500)),
             ],
           ),
           const Spacer(),
@@ -198,7 +200,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               elevation: 0,
             ),
-            child: const Text("CONTINUE", style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.continueText, style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

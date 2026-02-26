@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminAnalyticsScreen extends StatelessWidget {
   const AdminAnalyticsScreen({super.key});
@@ -8,12 +10,12 @@ class AdminAnalyticsScreen extends StatelessWidget {
   Future<void> _downloadSalesReport(BuildContext context) async {
     // Mock download
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Downloading Sales_Report_2024.csv...")),
+      SnackBar(content: Text(AppLocalizations.of(context)!.downloadingSalesReport)),
     );
     await Future.delayed(const Duration(seconds: 2));
     if (context.mounted) {
        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Download Complete (Mock)")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.downloadComplete)),
       );
     }
   }
@@ -25,7 +27,7 @@ class AdminAnalyticsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Analytics & Reports", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.analyticsReports, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.indigo,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -37,22 +39,22 @@ class AdminAnalyticsScreen extends StatelessWidget {
           children: [
             _buildActionCard(
               context, 
-              "Export Sales Report", 
-              "Download CSV of all orders", 
+              AppLocalizations.of(context)!.exportSalesReport, 
+              AppLocalizations.of(context)!.downloadCsvAllOrders, 
               Icons.download, 
               Colors.green, 
               _downloadSalesReport
             ),
             const SizedBox(height: 30),
             Text(
-              "Low Stock Alerts",
+              AppLocalizations.of(context)!.lowStockAlerts,
               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
             _buildLowStockList(theme),
             const SizedBox(height: 30),
             Text(
-              "Most Sold Products",
+              AppLocalizations.of(context)!.mostSoldProducts,
               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
@@ -95,7 +97,7 @@ class AdminAnalyticsScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Card(child: Padding(padding: EdgeInsets.all(20), child: Center(child: Text("No low stock items. Good job!"))));
+          return Card(child: Padding(padding: const EdgeInsets.all(20), child: Center(child: Text(AppLocalizations.of(context)!.noLowStockItems))));
         }
 
         return ListView.builder(
@@ -112,8 +114,8 @@ class AdminAnalyticsScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               child: ListTile(
                 leading: const Icon(Icons.warning, color: Colors.red),
-                title: Text(data['name'] ?? 'Uknown', style: const TextStyle(fontWeight: FontWeight.bold)),
-                trailing: Text("$stock left", style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                title: TranslatedText(data['name'] ?? AppLocalizations.of(context)!.unknownProduct, style: const TextStyle(fontWeight: FontWeight.bold)),
+                trailing: Text("$stock ${AppLocalizations.of(context)!.leftLabel}", style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
               ),
             );
           },
@@ -135,10 +137,10 @@ class AdminAnalyticsScreen extends StatelessWidget {
         }
         
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-           return const Card(
+           return Card(
              child: Padding(
-               padding: EdgeInsets.all(20), 
-               child: Center(child: Text("No sales data available yet."))
+               padding: const EdgeInsets.all(20), 
+               child: Center(child: Text(AppLocalizations.of(context)!.noSalesData))
              )
            );
         }
@@ -156,8 +158,8 @@ class AdminAnalyticsScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               child: ListTile(
                 leading: const Icon(FontAwesomeIcons.crown, color: Colors.amber),
-                title: Text(data['name'] ?? 'Unknown Product', style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text("Sold: $soldCount units"),
+                title: TranslatedText(data['name'] ?? AppLocalizations.of(context)!.unknownProduct, style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text("${AppLocalizations.of(context)!.soldLabel}: $soldCount ${AppLocalizations.of(context)!.unitsLabel}"),
                 trailing: const Icon(Icons.trending_up, color: Colors.green),
               ),
             );

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reality_cart/user/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/wishlist_provider.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class RecentlyViewedScreen extends StatelessWidget {
   const RecentlyViewedScreen({super.key});
@@ -13,7 +14,7 @@ class RecentlyViewedScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recently Viewed", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.recentlyViewedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -25,7 +26,7 @@ class RecentlyViewedScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             // If you get an error here, check the Debug Console for a link to create an index
-            return const Center(child: Text("Something went wrong"));
+            return Center(child: Text(AppLocalizations.of(context)!.somethingWentWrong));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -33,7 +34,7 @@ class RecentlyViewedScreen extends StatelessWidget {
 
           final docs = snapshot.data?.docs ?? [];
           if (docs.isEmpty) {
-            return const Center(child: Text("No recently viewed products"));
+            return Center(child: Text(AppLocalizations.of(context)!.noRecentlyViewedProducts));
           }
 
           return GridView.builder(
@@ -139,7 +140,7 @@ class RecentlyViewedScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          data['name'] ?? 'Product Name',
+                          data['name'] ?? AppLocalizations.of(context)!.productName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: theme.textTheme.titleMedium?.color),

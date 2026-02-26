@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,26 +13,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, dynamic>> _onboardingData = [
-    {
-      "title": "Welcome to Reality Cart",
-      "description": "Experience shopping like never before with Augmented Reality.",
-      "image": "assets/images/app_logo.png",
-    },
-    {
-      "title": "Try Before You Buy",
-      "description": "Visualize products in your own space to make confident decisions.",
-      "icon": Icons.shopping_bag_outlined,
-    },
-    {
-      "title": "Fast & Secure",
-      "description": "Enjoy seamless checkout and reliable delivery right to your door.",
-      "icon": Icons.local_shipping_outlined,
-    },
-  ];
+  List<Map<String, dynamic>> _getLocalizedOnboardingData(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      {
+        "title": l10n.onboardingTitle1,
+        "description": l10n.onboardingDesc1,
+        "image": "assets/images/app_logo.png",
+      },
+      {
+        "title": l10n.onboardingTitle2,
+        "description": l10n.onboardingDesc2,
+        "icon": Icons.shopping_bag_outlined,
+      },
+      {
+        "title": l10n.onboardingTitle3,
+        "description": l10n.onboardingDesc3,
+        "icon": Icons.local_shipping_outlined,
+      },
+    ];
+  }
 
-  void _onNext() {
-    if (_currentPage < _onboardingData.length - 1) {
+  void _onNext(int dataLength) {
+    if (_currentPage < dataLength - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
@@ -51,8 +55,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final onboardingData = _getLocalizedOnboardingData(context);
+    final l10n = AppLocalizations.of(context)!;
     int currentStep = _currentPage + 1;
-    int totalSteps = _onboardingData.length;
+    int totalSteps = onboardingData.length;
     double progress = currentStep / totalSteps;
     const Color orangeColor = Color(0xFFFB8C00);
 
@@ -60,7 +66,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Row(
@@ -75,12 +80,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  if (_currentPage < _onboardingData.length - 1)
+                  if (_currentPage < onboardingData.length - 1)
                     TextButton(
                       onPressed: _onGetStarted,
-                      child: const Text(
-                        "Skip",
-                        style: TextStyle(
+                      child: Text(
+                        l10n.skip,
+                        style: const TextStyle(
                           color: orangeColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -92,7 +97,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
-            // Progress Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: LinearProgressIndicator(
@@ -103,7 +107,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
-            
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -112,24 +115,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _currentPage = value;
                   });
                 },
-                itemCount: _onboardingData.length,
+                itemCount: onboardingData.length,
                 itemBuilder: (context, index) => OnboardingContent(
-                  title: _onboardingData[index]["title"],
-                  description: _onboardingData[index]["description"],
-                  icon: _onboardingData[index]["icon"],
-                  image: _onboardingData[index]["image"],
+                  title: onboardingData[index]["title"],
+                  description: onboardingData[index]["description"],
+                  icon: onboardingData[index]["icon"],
+                  image: onboardingData[index]["image"],
                 ),
               ),
             ),
-            
-            // Bottom Button
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _onNext,
+                  onPressed: () => _onNext(onboardingData.length),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: orangeColor,
                     foregroundColor: Colors.white,
@@ -139,7 +140,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                   child: Text(
-                    _currentPage == _onboardingData.length - 1 ? "Get Started" : "Next",
+                    _currentPage == onboardingData.length - 1 ? l10n.getStarted : l10n.next,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -178,7 +179,7 @@ class OnboardingContent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (image != null)
-             Image.asset(
+            Image.asset(
               image!,
               height: 200,
             )
@@ -186,8 +187,8 @@ class OnboardingContent extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(30),
               decoration: BoxDecoration(
-                 color: orangeColor.withOpacity(0.2),
-                 shape: BoxShape.circle,
+                color: orangeColor.withOpacity(0.2),
+                shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,

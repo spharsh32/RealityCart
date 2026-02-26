@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reality_cart/user/home_screen.dart';
 import 'package:reality_cart/user/my_orders_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
   final String orderId;
@@ -38,14 +39,14 @@ class OrderConfirmationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              "Order Placed Successfully!",
+              AppLocalizations.of(context)!.orderPlacedSuccessfully,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              "Order ID: #${orderId.substring(0, 8).toUpperCase()}",
+              "${AppLocalizations.of(context)!.orderId}: #${orderId.substring(0, 8).toUpperCase()}",
               style: TextStyle(
                 color: theme.textTheme.bodySmall?.color,
                 fontWeight: FontWeight.w500,
@@ -67,7 +68,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Amount Paid:"),
+                      Text(AppLocalizations.of(context)!.amountPaid),
                       Text(
                         "₹${totalAmount.toStringAsFixed(2)}",
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -78,10 +79,10 @@ class OrderConfirmationScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Payment Status:"),
-                      const Text(
-                        "Confirmed",
-                        style: TextStyle(
+                      Text(AppLocalizations.of(context)!.paymentStatus),
+                      Text(
+                        AppLocalizations.of(context)!.confirmed,
+                        style: const TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
                         ),
@@ -113,7 +114,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: const Text("VIEW ORDER", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.viewOrder, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -132,7 +133,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         foregroundColor: brandOrange,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: const Text("CONTINUE SHOPPING", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.continueShopping, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],

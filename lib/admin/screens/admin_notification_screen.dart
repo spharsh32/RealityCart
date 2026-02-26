@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/admin_notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminNotificationScreen extends StatefulWidget {
   const AdminNotificationScreen({super.key});
@@ -29,7 +30,7 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Notifications", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.notificationsTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: brandOrange,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -39,7 +40,7 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Center(child: Text("Error: ${snapshot.error}"));
+          if (snapshot.hasError) return Center(child: Text("${AppLocalizations.of(context)!.errorMsg}${snapshot.error}"));
           if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
 
           final docs = snapshot.data?.docs ?? [];
@@ -56,7 +57,7 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "No Notifications",
+                    AppLocalizations.of(context)!.noNotifications,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.textTheme.bodySmall?.color,
                     ),
@@ -80,7 +81,7 @@ class _AdminNotificationScreenState extends State<AdminNotificationScreen> {
                 onDismissed: (direction) {
                   doc.reference.delete();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Notification dismissed")),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.notificationDismissed)),
                   );
                 },
                 background: Container(

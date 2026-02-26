@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/cart_provider.dart';
 import 'package:reality_cart/user/checkout_screen.dart';
 import 'package:reality_cart/user/home_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -15,7 +17,7 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.myCart, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: cartProvider.cartItems.isEmpty
@@ -25,9 +27,9 @@ class CartScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.shopping_cart_outlined, size: 80, color: theme.disabledColor.withOpacity(0.2)),
                   const SizedBox(height: 16),
-                  const Text("Your cart is empty!", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.yourCartIsEmpty, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text("Add items to it now.", style: TextStyle(color: theme.hintColor)),
+                  Text(AppLocalizations.of(context)!.addItemsNow, style: TextStyle(color: theme.hintColor)),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
@@ -37,7 +39,7 @@ class CartScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: brandOrange, foregroundColor: Colors.white),
-                    child: const Text("Shop Now"),
+                    child: Text(AppLocalizations.of(context)!.shopNow),
                   ),
                 ],
               ),
@@ -80,9 +82,9 @@ class CartScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                    TranslatedText(item.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15), maxLines: 2, overflow: TextOverflow.ellipsis),
                                     const SizedBox(height: 4),
-                                    Text("Size: ${item.size}", style: TextStyle(color: theme.hintColor, fontSize: 13)),
+                                    Text("${AppLocalizations.of(context)!.size}: ${item.size}", style: TextStyle(color: theme.hintColor, fontSize: 13)),
                                     const SizedBox(height: 8),
                                     Text("₹${item.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                     const SizedBox(height: 12),
@@ -98,7 +100,7 @@ class CartScreen extends StatelessWidget {
                                         const Spacer(),
                                         TextButton(
                                           onPressed: () => cartProvider.removeFromCart(item),
-                                          child: const Text("Remove", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                          child: Text(AppLocalizations.of(context)!.remove, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                                         ),
                                       ],
                                     ),
@@ -127,7 +129,7 @@ class CartScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("₹${cartProvider.total.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            const Text("View details", style: TextStyle(color: brandOrange, fontSize: 12, fontWeight: FontWeight.bold)),
+                            Text(AppLocalizations.of(context)!.viewDetails, style: const TextStyle(color: brandOrange, fontSize: 12, fontWeight: FontWeight.bold)),
                           ],
                         ),
                         const Spacer(),
@@ -142,7 +144,7 @@ class CartScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                             elevation: 0,
                           ),
-                          child: const Text("PLACE ORDER", style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(AppLocalizations.of(context)!.placeOrder, style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),

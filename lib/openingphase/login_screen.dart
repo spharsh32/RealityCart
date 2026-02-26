@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reality_cart/user/home_screen.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:reality_cart/services/fcm_service.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -281,9 +282,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
               );
             },
-            child: const Text(
-              "Admin",
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.adminPortal,
+              style: const TextStyle(
                 color: Color(0xFFFB8C00),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -309,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Welcome Back",
+                    AppLocalizations.of(context)!.welcomeMessage,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 24,
@@ -338,9 +339,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   unselectedLabelColor: Theme.of(context).textTheme.bodySmall?.color,
                   indicatorSize: TabBarIndicatorSize.tab,
                   dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "Email"),
-                    Tab(text: "Phone"),
+                  tabs: [
+                    Tab(text: AppLocalizations.of(context)!.email),
+                    Tab(text: "Phone"), // Kept Phone static for brevity or add if needed, let's add "phone" generically
                   ],
                 ),
               ),
@@ -365,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
-                                labelText: "Email",
+                                labelText: AppLocalizations.of(context)!.email,
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -378,7 +379,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               controller: _passwordController,
                               obscureText: !_isPasswordVisible,
                               decoration: InputDecoration(
-                                labelText: "Password",
+                                labelText: AppLocalizations.of(context)!.password,
                                 prefixIcon: const Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
                                   icon: Icon(
@@ -408,7 +409,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     ),
                                   );
                                 },
-                                child: const Text("Forgot Password?", style: TextStyle(color: Color(0xFFFB8C00)),),
+                                child: Text(AppLocalizations.of(context)!.forgotPassword, style: const TextStyle(color: Color(0xFFFB8C00))),
                               ),
                             ),
                             const SizedBox(height: 5),
@@ -426,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 ),
                                 child: _isLoading
                                     ? const CircularProgressIndicator(color: Colors.white)
-                                    : const Text("Login", style: TextStyle(fontSize: 16)),
+                                    : Text(AppLocalizations.of(context)!.login, style: const TextStyle(fontSize: 16)),
                               ),
                             ),
                           ],
@@ -448,7 +449,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                labelText: "Phone Number",
+                                labelText: AppLocalizations.of(context)!.phoneNumber,
                                 prefixIcon: const Icon(Icons.phone),
                                 prefixText: "+91 ", // Placeholder prefix
                                 border: OutlineInputBorder(
@@ -491,7 +492,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 child: _isLoading
                                     ? const CircularProgressIndicator(color: Colors.white)
                                     : Text(
-                                        _otpSent ? "Verify & Login" : "Send OTP",
+                                        _otpSent ? AppLocalizations.of(context)!.verifyAndLogin : AppLocalizations.of(context)!.sendOTP,
                                         style: const TextStyle(fontSize: 16),
                                       ),
                               ),
@@ -505,7 +506,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     _timer?.cancel();
                                   });
                                 },
-                                child: const Text("Change Phone Number", style: TextStyle(color: Color(0xFFFB8C00))),
+                                child: Text(AppLocalizations.of(context)!.changePhoneNumber, style: const TextStyle(color: Color(0xFFFB8C00))),
                               ),
                             if (_otpSent)
                               Row(
@@ -547,7 +548,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account?"),
+                      Text(AppLocalizations.of(context)!.dontHaveAccount),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).push(
@@ -556,7 +557,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             ),
                           );
                         },
-                        child: const Text("Sign Up", style: TextStyle(color: Color(0xFFFB8C00))),
+                        child: Text(AppLocalizations.of(context)!.signUp, style: const TextStyle(color: Color(0xFFFB8C00))),
                       ),
                     ],
                   ),
@@ -567,7 +568,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       Expanded(child: Divider(color: Colors.grey[400])),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text("Or continue with", style: TextStyle(color: Colors.grey[600])),
+                        child: Text(AppLocalizations.of(context)!.orContinueWith, style: TextStyle(color: Colors.grey[600])),
                       ),
                       Expanded(child: Divider(color: Colors.grey[400])),
                     ],

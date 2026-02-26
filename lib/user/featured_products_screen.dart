@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reality_cart/user/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/wishlist_provider.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class FeaturedProductsScreen extends StatefulWidget {
   const FeaturedProductsScreen({super.key});
@@ -22,7 +24,7 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Featured Products", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.featuredProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -47,7 +49,7 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: ChoiceChip(
-                    label: Text(category),
+                    label: Text(_getTranslatedCategory(context, category)),
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) setState(() => _selectedCategory = category);
@@ -67,11 +69,11 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
             child: StreamBuilder<QuerySnapshot>(
               stream: _buildQuery().snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.hasError) return const Center(child: Text("Something went wrong"));
+                if (snapshot.hasError) return Center(child: Text(AppLocalizations.of(context)!.somethingWentWrong));
                 if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
 
                 final docs = snapshot.data?.docs ?? [];
-                if (docs.isEmpty) return const Center(child: Text("No products match your filters"));
+                if (docs.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noProductsMatchFilters));
 
                 return GridView.builder(
                   padding: const EdgeInsets.all(15),
@@ -121,6 +123,21 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
     return query;
   }
 
+  String _getTranslatedCategory(BuildContext context, String category) {
+    switch (category) {
+      case 'Electronics': return AppLocalizations.of(context)!.electronics;
+      case 'Fashion': return AppLocalizations.of(context)!.fashion;
+      case 'Home': return AppLocalizations.of(context)!.home;
+      case 'Books': return AppLocalizations.of(context)!.books;
+      case 'Toys': return AppLocalizations.of(context)!.toys;
+      case 'Beauty': return AppLocalizations.of(context)!.beauty;
+      case 'Sports': return AppLocalizations.of(context)!.sports;
+      case 'Grocery': return AppLocalizations.of(context)!.grocery;
+      case 'Automotive': return AppLocalizations.of(context)!.automotive;
+      default: return AppLocalizations.of(context)!.all;
+    }
+  }
+
   void _showSortDialog() {
     showModalBottomSheet(
       context: context,
@@ -132,11 +149,11 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Sort By", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(AppLocalizations.of(context)!.sortBy, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
-              _sortTile('Newest'),
-              _sortTile('Price: Low to High'),
-              _sortTile('Price: High to Low'),
+              _sortTile('Newest', AppLocalizations.of(context)!.newest),
+              _sortTile('Price: Low to High', AppLocalizations.of(context)!.priceLowToHigh),
+              _sortTile('Price: High to Low', AppLocalizations.of(context)!.priceHighToLow),
             ],
           ),
         );
@@ -144,12 +161,12 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
     );
   }
 
-  Widget _sortTile(String title) {
+  Widget _sortTile(String value, String title) {
     return ListTile(
       title: Text(title),
-      trailing: _selectedSort == title ? const Icon(Icons.check, color: Color(0xFFFB8C00)) : null,
+      trailing: _selectedSort == value ? const Icon(Icons.check, color: Color(0xFFFB8C00)) : null,
       onTap: () {
-        setState(() => _selectedSort = title);
+        setState(() => _selectedSort = value);
         Navigator.pop(context);
       },
     );
@@ -237,8 +254,8 @@ class _FeaturedProductsScreenState extends State<FeaturedProductsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          data['name'] ?? 'Product Name',
+                        TranslatedText(
+                          data['name'] ?? AppLocalizations.of(context)!.productName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: theme.textTheme.titleMedium?.color),

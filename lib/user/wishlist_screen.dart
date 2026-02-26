@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/wishlist_provider.dart';
 import 'package:reality_cart/user/product_detail_screen.dart';
 import 'package:reality_cart/user/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -19,7 +20,7 @@ class WishlistScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Wishlist", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.myWishlist, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: wishlistItems.isEmpty
@@ -29,9 +30,9 @@ class WishlistScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.favorite_border, size: 80, color: theme.disabledColor.withOpacity(0.2)),
                   const SizedBox(height: 16),
-                  const Text("Your wishlist is empty!", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.yourWishlistIsEmpty, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text("Save items you like for later.", style: TextStyle(color: theme.hintColor)),
+                  Text(AppLocalizations.of(context)!.saveItemsForLater, style: TextStyle(color: theme.hintColor)),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
@@ -41,7 +42,7 @@ class WishlistScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: brandOrange, foregroundColor: Colors.white),
-                    child: const Text("Shop Now"),
+                    child: Text(AppLocalizations.of(context)!.shopNow),
                   ),
                 ],
               ),
@@ -88,7 +89,7 @@ class WishlistItem extends StatelessWidget {
         }
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
-        final name = data['name'] ?? 'Unknown Product';
+        final name = data['name'] ?? AppLocalizations.of(context)!.unknownProduct;
         final price = (data['price'] ?? 0).toDouble();
         final imageUrls = data['imageUrls'] as List<dynamic>?;
         final firstImage = (imageUrls != null && imageUrls.isNotEmpty) ? imageUrls[0] : null;
@@ -123,7 +124,7 @@ class WishlistItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15), maxLines: 2, overflow: TextOverflow.ellipsis),
+                      TranslatedText(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15), maxLines: 2, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 8),
                       Text("₹${price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                       const SizedBox(height: 12),
@@ -141,7 +142,7 @@ class WishlistItem extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 0),
                               visualDensity: VisualDensity.compact,
                             ),
-                            child: const Text("Remove", style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(AppLocalizations.of(context)!.remove, style: const TextStyle(fontWeight: FontWeight.bold)),
                           ),
                           const Spacer(),
                            ElevatedButton(
@@ -159,7 +160,7 @@ class WishlistItem extends StatelessWidget {
                                 elevation: 0,
                                 visualDensity: VisualDensity.compact, // Make it smaller
                               ),
-                              child: const Text("View Details", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text(AppLocalizations.of(context)!.viewDetails, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                         ],
                       ),

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:reality_cart/user/order_details_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   const MyOrdersScreen({super.key});
@@ -11,16 +12,16 @@ class MyOrdersScreen extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Cancel Order"),
-        content: const Text("Are you sure you want to cancel this order?"),
+        title: Text(AppLocalizations.of(context)!.cancelOrder),
+        content: Text(AppLocalizations.of(context)!.areYouSureCancelOrder),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("No"),
+            child: Text(AppLocalizations.of(context)!.no),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Yes, Cancel", style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.yesCancel, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -59,7 +60,7 @@ class MyOrdersScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Orders", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.myOrders, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -91,7 +92,7 @@ class MyOrdersScreen extends StatelessWidget {
                   Icon(Icons.shopping_bag_outlined, size: 80, color: theme.disabledColor.withOpacity(0.2)),
                   const SizedBox(height: 16),
                   Text(
-                    "No orders found",
+                    AppLocalizations.of(context)!.noOrdersFound,
                     style: TextStyle(fontSize: 18, color: theme.hintColor),
                   ),
                 ],
@@ -138,7 +139,7 @@ class MyOrdersScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Order #${orderId.substring(0, 8).toUpperCase()}",
+                          "${AppLocalizations.of(context)!.orderId} #${orderId.substring(0, 8).toUpperCase()}",
                           style: TextStyle(
                             fontWeight: FontWeight.bold, 
                             fontSize: 16,
@@ -164,7 +165,7 @@ class MyOrdersScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Placed on $formattedDate",
+                      "${AppLocalizations.of(context)!.placedOn} $formattedDate",
                       style: TextStyle(color: theme.textTheme.bodySmall?.color, fontSize: 14),
                     ),
                     const SizedBox(height: 5),
@@ -172,11 +173,11 @@ class MyOrdersScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "${items.length} items",
+                          "${items.length} ${AppLocalizations.of(context)!.items}",
                           style: TextStyle(color: theme.textTheme.bodySmall?.color, fontSize: 14),
                         ),
                         Text(
-                          "Total: ₹${totalAmount.toStringAsFixed(2)}",
+                          "${AppLocalizations.of(context)!.total}: ₹${totalAmount.toStringAsFixed(2)}",
                           style: TextStyle(
                             fontWeight: FontWeight.bold, 
                             fontSize: 16,
@@ -206,7 +207,7 @@ class MyOrdersScreen extends StatelessWidget {
                               side: const BorderSide(color: Color(0xFFFB8C00)),
                               foregroundColor: const Color(0xFFFB8C00),
                             ),
-                            child: const Text("View Details"),
+                            child: Text(AppLocalizations.of(context)!.viewDetails),
                           ),
                         ),
                         if (status == 'Processing') ...[
@@ -223,7 +224,7 @@ class MyOrdersScreen extends StatelessWidget {
                                   side: const BorderSide(color: Colors.red),
                                 ),
                               ),
-                              child: const Text("Cancel Order"),
+                              child: Text(AppLocalizations.of(context)!.cancelOrder),
                             ),
                           ),
                         ],

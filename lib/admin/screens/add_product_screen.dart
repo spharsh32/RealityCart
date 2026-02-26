@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'dart:async';
 import 'package:reality_cart/services/fcm_service.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AddProductScreen extends StatefulWidget {
   final String? productId;
@@ -80,36 +81,59 @@ class _AddProductScreenState extends State<AddProductScreen> {
     super.dispose();
   }
 
-  Future<void> _pickFromDrive(int index) async {
+  Future<void> _pickImage(int index) async {
     try {
-      final googleSignIn = GoogleSignIn(scopes: [drive.DriveApi.driveReadonlyScope]);
-      final account = await googleSignIn.signIn();
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       
-      if (account == null) return;
+      if (image == null) return;
 
-      final authHeaders = await account.authHeaders;
-      final authenticateClient = _GoogleAuthClient(authHeaders);
-      final driveApi = drive.DriveApi(authenticateClient);
+      setState(() {
+        _isLoading = true;
+      });
 
-      // Show a file picker dialog
-      if (!mounted) return;
-      final selectedFile = await showDialog<drive.File>(
-        context: context,
-        builder: (context) => _DriveFilePicker(driveApi: driveApi),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.uploadingImage)),
+        );
+      }
 
-      if (selectedFile != null && selectedFile.id != null) {
-        // Construct the direct display link
-        final link = "https://lh3.googleusercontent.com/u/0/d/${selectedFile.id}=w1000";
+      final bytes = await image.readAsBytes();
+      final String cloudName = "drh3u38xr";
+      final String uploadPreset = "RealityCart"; // Cloudinary Upload Preset
+      
+      final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+      
+      var request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = uploadPreset
+        ..files.add(http.MultipartFile.fromBytes(
+          'file', 
+          bytes,
+          filename: image.name,
+        ));
+        
+      var response = await request.send();
+      
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseData);
+        String secureUrl = jsonResponse['secure_url'];
         
         setState(() {
-          _imageControllers[index].text = link;
+          _imageControllers[index].text = secureUrl;
+          _isLoading = false;
         });
+      } else {
+        var responseData = await response.stream.bytesToString();
+        throw Exception("Failed to upload image. Status: ${response.statusCode}, Body: $responseData");
       }
     } catch (e) {
       if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Drive Error: $e")),
+          SnackBar(content: Text("${AppLocalizations.of(context)!.uploadError}$e")),
         );
       }
     }
@@ -214,7 +238,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.productId != null ? "Edit Product" : "Add New Product", 
+          widget.productId != null ? AppLocalizations.of(context)!.editProduct : AppLocalizations.of(context)!.addProduct, 
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
         backgroundColor: brandOrange,
@@ -229,38 +253,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle(context, "Basic Information"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.basicInformation),
                   const SizedBox(height: 15),
-                  _buildTextField(context, "Product Name", _nameController, Icons.label),
+                  _buildTextField(context, AppLocalizations.of(context)!.productNameLabel, _nameController, Icons.label),
                   const SizedBox(height: 15),
                   Row(
                     children: [
-                      Expanded(child: _buildTextField(context, "Price (₹)", _priceController, Icons.currency_rupee, isNumber: true)),
+                      Expanded(child: _buildTextField(context, AppLocalizations.of(context)!.priceRupee, _priceController, Icons.currency_rupee, isNumber: true)),
                       const SizedBox(width: 15),
-                      Expanded(child: _buildTextField(context, "Discount (%)", _discountController, Icons.percent, isNumber: true)),
+                      Expanded(child: _buildTextField(context, AppLocalizations.of(context)!.discountPercent, _discountController, Icons.percent, isNumber: true)),
                     ],
                   ),
                   const SizedBox(height: 15),
                   Row(
                      children: [
-                       Expanded(child: _buildTextField(context, "Stock Quantity", _stockController, Icons.inventory, isNumber: true)),
+                       Expanded(child: _buildTextField(context, AppLocalizations.of(context)!.stockQuantity, _stockController, Icons.inventory, isNumber: true)),
                        const SizedBox(width: 15),
                        Expanded(child: _buildDropdown(context)),
                      ],
                   ),
                   const SizedBox(height: 15),
                   SwitchListTile(
-                    title: const Text("Mark as Featured"),
+                    title: Text(AppLocalizations.of(context)!.markAsFeatured),
                     value: _isFeatured,
                     onChanged: (val) => setState(() => _isFeatured = val),
                     activeColor: brandOrange,
                     contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 15),
-                  _buildTextField(context, "Description", _descController, Icons.description, maxLines: 3),
+                  _buildTextField(context, AppLocalizations.of(context)!.description, _descController, Icons.description, maxLines: 3),
                   
                   const SizedBox(height: 30),
-                  _buildSectionTitle(context, "Variants"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.variants),
                   const SizedBox(height: 10),
                   ..._variants.asMap().entries.map((entry) {
                     int index = entry.key;
@@ -275,7 +299,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               flex: 2,
                               child: TextFormField(
                                 initialValue: _variants[index]['type'],
-                                decoration: const InputDecoration(labelText: "Type (e.g. Size, Color)"),
+                                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.variantTypeHint),
                                 onChanged: (val) => _variants[index]['type'] = val,
                               ),
                             ),
@@ -284,7 +308,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               flex: 3,
                               child: TextFormField(
                                 initialValue: _variants[index]['values'],
-                                decoration: const InputDecoration(labelText: "Values (comma separated)"),
+                                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.variantValuesHint),
                                 onChanged: (val) => _variants[index]['values'] = val,
                               ),
                             ),
@@ -300,15 +324,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   TextButton.icon(
                     onPressed: _addVariant,
                     icon: const Icon(Icons.add_circle),
-                    label: const Text("Add Variant"),
+                    label: Text(AppLocalizations.of(context)!.addVariant),
                     style: TextButton.styleFrom(foregroundColor: brandOrange),
                   ),
 
                   const SizedBox(height: 20),
-                  _buildSectionTitle(context, "Product Images"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.productImages),
                   const SizedBox(height: 10),
                   Text(
-                    "Select images from your Google Drive.",
+                    AppLocalizations.of(context)!.uploadImagesHint,
                     style: TextStyle(fontSize: 12, color: theme.hintColor),
                   ),
                   const SizedBox(height: 15),
@@ -324,15 +348,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             child: TextFormField(
                               controller: controller,
                               decoration: InputDecoration(
-                                labelText: "Drive Image Link ${index + 1}",
+                                labelText: "${AppLocalizations.of(context)!.imageUrlLabel} ${index + 1}",
                                 prefixIcon: const Icon(Icons.image, color: brandOrange),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                                 filled: true,
                                 fillColor: theme.cardColor,
                                 suffixIcon: IconButton(
-                                  icon: const Icon(FontAwesomeIcons.googleDrive, color: Colors.blue),
-                                  onPressed: () => _pickFromDrive(index),
-                                  tooltip: "Pick from Drive",
+                                  icon: const Icon(Icons.upload_file, color: Colors.blue),
+                                  onPressed: () => _pickImage(index),
+                                  tooltip: "Upload to Cloudinary",
                                 ),
                               ),
                               validator: (value) => (value == null || value.isEmpty) ? 'Link required' : null,
@@ -353,19 +377,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     TextButton.icon(
                       onPressed: _addImageField,
                       icon: const Icon(Icons.add_circle, color: brandOrange),
-                      label: const Text("Add Another Image Slot", style: TextStyle(color: brandOrange)),
+                      label: Text(AppLocalizations.of(context)!.addAnotherImageSlot, style: const TextStyle(color: brandOrange)),
                     ),
 
                   const SizedBox(height: 30),
-                  _buildSectionTitle(context, "AR & Media"),
+                  _buildSectionTitle(context, AppLocalizations.of(context)!.arAndMedia),
                   const SizedBox(height: 15),
                   
-                  Text("3D Model (GLB/GLTF)", style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.arModelLabel, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _arModelController,
                     decoration: InputDecoration(
-                      hintText: "Enter URL for .glb file",
+                      hintText: AppLocalizations.of(context)!.arModelHint,
                       prefixIcon: const Icon(FontAwesomeIcons.cube, color: brandOrange),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       filled: true,
@@ -393,7 +417,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(widget.productId != null ? "Update Product" : "Save Product", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          : Text(widget.productId != null ? AppLocalizations.of(context)!.updateProductBtn : AppLocalizations.of(context)!.saveProductBtn, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -436,7 +460,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return DropdownButtonFormField<String>(
       initialValue: _selectedCategory,
       decoration: InputDecoration(
-        labelText: "Category",
+        labelText: AppLocalizations.of(context)!.categoryLabel,
         prefixIcon: const Icon(Icons.category, color: Color(0xFFFB8C00)),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         filled: true,
@@ -444,87 +468,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
       items: _categories.map((String category) => DropdownMenuItem<String>(value: category, child: Text(category))).toList(),
       onChanged: (String? newValue) => setState(() => _selectedCategory = newValue!),
-    );
-  }
-}
-
-class _GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
-  final http.Client _client = http.Client();
-
-  _GoogleAuthClient(this._headers);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    request.headers.addAll(_headers);
-    return _client.send(request);
-  }
-}
-
-class _DriveFilePicker extends StatefulWidget {
-  final drive.DriveApi driveApi;
-  const _DriveFilePicker({required this.driveApi});
-
-  @override
-  State<_DriveFilePicker> createState() => _DriveFilePickerState();
-}
-
-class _DriveFilePickerState extends State<_DriveFilePicker> {
-  List<drive.File> _files = [];
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchFiles();
-  }
-
-  Future<void> _fetchFiles() async {
-    try {
-      final list = await widget.driveApi.files.list(
-        q: "mimeType contains 'image/'",
-        spaces: 'drive',
-        $fields: 'files(id, name, thumbnailLink, webViewLink)',
-      );
-      setState(() {
-        _files = list.files ?? [];
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return AlertDialog(
-      backgroundColor: theme.cardColor,
-      title: Text("Select Image from Drive", style: theme.textTheme.titleLarge),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 300,
-        child: _loading 
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFFFB8C00)))
-          : _files.isEmpty 
-            ? const Center(child: Text("No images found"))
-            : ListView.builder(
-                itemCount: _files.length,
-                itemBuilder: (context, index) {
-                  final file = _files[index];
-                  return ListTile(
-                    leading: file.thumbnailLink != null 
-                      ? Image.network(file.thumbnailLink!, width: 40)
-                      : Icon(Icons.image, color: theme.disabledColor),
-                    title: Text(file.name ?? "Unnamed File", style: theme.textTheme.bodyMedium),
-                    onTap: () => Navigator.pop(context, file),
-                  );
-                },
-              ),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel", style: TextStyle(color: Color(0xFFFB8C00)))),
-      ],
     );
   }
 }

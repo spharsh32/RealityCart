@@ -8,6 +8,8 @@ import 'package:reality_cart/user/my_orders_screen.dart';
 import 'package:reality_cart/user/help_support_screen.dart';
 import 'package:reality_cart/user/settings_screen.dart';
 import 'package:reality_cart/user/wishlist_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -24,8 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
 
     if (_user == null) {
-      return const Scaffold(
-        body: Center(child: Text("Please login to view profile")),
+      return Scaffold(
+        body: Center(child: Text(AppLocalizations.of(context)!.pleaseLoginToViewProfile)),
       );
     }
 
@@ -33,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('users').doc(_user!.uid).snapshots(),
         builder: (context, snapshot) {
-          String userName = "User Name";
+          String userName = AppLocalizations.of(context)!.userName;
           String userEmail = _user!.email ?? "user@example.com";
 
           if (snapshot.hasData && snapshot.data!.exists) {
@@ -62,19 +64,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 14, color: theme.textTheme.bodySmall?.color),
                   ),
                   const SizedBox(height: 30),
-                  _buildProfileOption(context, Icons.shopping_bag_outlined, "My Orders", () {
+                  _buildProfileOption(context, Icons.shopping_bag_outlined, AppLocalizations.of(context)!.myOrders, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const MyOrdersScreen()),
                     );
                   }),
-                  _buildProfileOption(context, Icons.favorite_border, "My Wishlist", () {
+                  _buildProfileOption(context, Icons.favorite_border, AppLocalizations.of(context)!.myWishlist, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const WishlistScreen()),
                     );
                   }),
-                  _buildProfileOption(context, Icons.location_on_outlined, "Shipping Addresses", () {
+                  _buildProfileOption(context, Icons.location_on_outlined, AppLocalizations.of(context)!.shippingAddresses, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -82,26 +84,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   }),
-                  _buildProfileOption(context, Icons.payment_outlined, "Payment Methods", () {
+                  _buildProfileOption(context, Icons.payment_outlined, AppLocalizations.of(context)!.paymentMethods, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const PaymentMethodScreen()),
                     );
                   }),
-                  _buildProfileOption(context, Icons.settings_outlined, "Settings", () {
+                  _buildProfileOption(context, Icons.settings_outlined, AppLocalizations.of(context)!.settings, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const SettingsScreen()),
                     );
                   }),
-                  _buildProfileOption(context, Icons.help_outline, "Help & Support", () {
+                  _buildProfileOption(context, Icons.help_outline, AppLocalizations.of(context)!.helpAndSupport, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const HelpSupportScreen()),
                     );
                   }),
                   const SizedBox(height: 20),
-                  _buildProfileOption(context, Icons.logout, "Logout", () async {
+                  _buildProfileOption(context, Icons.logout, AppLocalizations.of(context)!.logout, () async {
                     await FirebaseAuth.instance.signOut();
                     if (mounted) {
                       Navigator.of(context).pushAndRemoveUntil(

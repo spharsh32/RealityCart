@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AIScreen extends StatefulWidget {
   const AIScreen({super.key});
@@ -12,13 +13,33 @@ class AIScreen extends StatefulWidget {
 class _AIScreenState extends State<AIScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<Map<String, dynamic>> _messages = [
-    {
-      "text": "Hello! I am your Reality Cart AI assistant. How can I help you today?",
-      "isUser": false,
-      "time": DateTime.now(),
+  final List<Map<String, dynamic>> _messages = [];
+
+  void _initMessages() {
+    // Cannot access AppLocalizations in initState, deferred to build or specific methods.
+    _messages.clear();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initMessages();
+  }
+
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _messages.add({
+        "text": AppLocalizations.of(context)!.aiWelcomeMessage,
+        "isUser": false,
+        "time": DateTime.now(),
+      });
+      _initialized = true;
     }
-  ];
+  }
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
@@ -40,7 +61,7 @@ class _AIScreenState extends State<AIScreen> {
       if (mounted) {
         setState(() {
           _messages.add({
-            "text": _getAIResponse(userMessage),
+            "text": _getAIResponse(userMessage, context),
             "isUser": false,
             "time": DateTime.now(),
           });
@@ -50,18 +71,18 @@ class _AIScreenState extends State<AIScreen> {
     });
   }
 
-  String _getAIResponse(String message) {
+  String _getAIResponse(String message, BuildContext context) {
     message = message.toLowerCase();
-    if (message.contains("hello") || message.contains("hi")) {
-      return "Hello there! Looking for something specific?";
-    } else if (message.contains("price") || message.contains("cost")) {
-      return "Our products have the best prices in the market. Check out the Featured section!";
-    } else if (message.contains("ar") || message.contains("reality")) {
-      return "You can view products in AR by clicking the 'View in AR' button on the product details page.";
-    } else if (message.contains("shipping") || message.contains("delivery")) {
-      return "We offer free shipping on orders over ₹500. Most orders arrive within 3-5 business days.";
+    if (message.contains("hello") || message.contains("hi") || message.contains("नमस्ते") || message.contains("हेलो")) {
+      return AppLocalizations.of(context)!.aiGreetingResponse;
+    } else if (message.contains("price") || message.contains("cost") || message.contains("कीमत") || message.contains("मूल्य")) {
+      return AppLocalizations.of(context)!.aiPriceResponse;
+    } else if (message.contains("ar") || message.contains("reality") || message.contains("एआर") || message.contains("रियलिटी")) {
+      return AppLocalizations.of(context)!.aiArResponse;
+    } else if (message.contains("shipping") || message.contains("delivery") || message.contains("शिपिंग") || message.contains("डिलीवरी")) {
+      return AppLocalizations.of(context)!.aiShippingResponse;
     } else {
-      return "I'm still learning! Try asking about products, AR features, or shipping.";
+      return AppLocalizations.of(context)!.aiFallbackResponse;
     }
   }
 
@@ -89,7 +110,7 @@ class _AIScreenState extends State<AIScreen> {
             const FaIcon(FontAwesomeIcons.wandMagicSparkles, size: 20, color: Color(0xFFFB8C00)),
             const SizedBox(width: 10),
             Text(
-              "Reality AI",
+              AppLocalizations.of(context)!.realityAi,
               style: GoogleFonts.outfit(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -104,13 +125,13 @@ class _AIScreenState extends State<AIScreen> {
                 setState(() {
                 _messages.clear();
                 _messages.add({
-                    "text": "Hello! I am your Reality Cart AI assistant. How can I help you today?",
+                    "text": AppLocalizations.of(context)!.aiWelcomeMessage,
                     "isUser": false,
                     "time": DateTime.now(),
                 });
                 });
             },
-            tooltip: "Clear Chat",
+            tooltip: AppLocalizations.of(context)!.clearChat,
             ),
         ],
         centerTitle: false,
@@ -214,7 +235,7 @@ class _AIScreenState extends State<AIScreen> {
                 textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (_) => _sendMessage(),
                 decoration: InputDecoration(
-                  hintText: "Ask anything...",
+                  hintText: AppLocalizations.of(context)!.askAnything,
                   hintStyle: TextStyle(color: theme.hintColor),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),

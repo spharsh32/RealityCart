@@ -7,6 +7,7 @@ import 'package:reality_cart/services/fcm_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/cart_item.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class OrderPaymentScreen extends StatefulWidget {
   final String selectedAddressId;
@@ -173,7 +174,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Payment Options", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text(AppLocalizations.of(context)!.paymentOptions, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: _isProcessing
           ? const Center(child: CircularProgressIndicator())
@@ -197,15 +198,15 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Text("Select Payment Method", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Text(AppLocalizations.of(context)!.selectPaymentMethod, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           
           // UPI
           _buildMethodTile(
-            title: "UPI",
-            subtitle: "Google Pay, PhonePe, Paytm",
+            title: AppLocalizations.of(context)!.upi,
+            subtitle: AppLocalizations.of(context)!.upiSubtitle,
             icon: Icons.account_balance_wallet_outlined,
             value: "UPI",
           ),
@@ -215,16 +216,16 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
 
           // Net Banking
           _buildMethodTile(
-            title: "Net Banking",
-            subtitle: "All Indian Banks",
+            title: AppLocalizations.of(context)!.netBanking,
+            subtitle: AppLocalizations.of(context)!.netBankingSubtitle,
             icon: Icons.account_balance_outlined,
             value: "NetBanking",
           ),
 
           // Cash on Delivery
           _buildMethodTile(
-            title: "Cash on Delivery",
-            subtitle: "Pay when you receive",
+            title: AppLocalizations.of(context)!.cod,
+            subtitle: AppLocalizations.of(context)!.codSubtitle,
             icon: Icons.money_outlined,
             value: "COD",
           ),
@@ -259,8 +260,8 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
           groupValue: _selectedMethodType,
           onChanged: (val) => setState(() => _selectedMethodType = val!),
           activeColor: const Color(0xFFFB8C00),
-          title: const Text("Credit / Debit / ATM Card", style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: const Text("Add or use saved cards"),
+          title: Text(AppLocalizations.of(context)!.creditDebitAtm, style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(AppLocalizations.of(context)!.creditDebitAtmSubtitle),
           secondary: const Icon(Icons.credit_card, color: Color(0xFFFB8C00)),
         ),
         if (isCardSelected)
@@ -275,7 +276,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
                       return TextButton.icon(
                         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentMethodScreen())),
                         icon: const Icon(Icons.add, size: 18),
-                        label: const Text("Add New Card"),
+                        label: Text(AppLocalizations.of(context)!.addNewCard),
                         style: TextButton.styleFrom(foregroundColor: const Color(0xFFFB8C00)),
                       );
                     }
@@ -305,7 +306,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
                         TextButton.icon(
                           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentMethodScreen())),
                           icon: const Icon(Icons.add, size: 18),
-                          label: const Text("Add Another Card"),
+                          label: Text(AppLocalizations.of(context)!.addAnotherCard),
                           style: TextButton.styleFrom(foregroundColor: const Color(0xFFFB8C00)),
                         ),
                       ],
@@ -325,11 +326,11 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Price Details", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.priceDetails, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          _priceRow("Price (${widget.items.length} items)", "₹${widget.subtotal.toStringAsFixed(2)}"),
-          _priceRow("Delivery Fee", "FREE", color: Colors.green),
-          _priceRow("Tax (5%)", "₹${widget.tax.toStringAsFixed(2)}"),
+          _priceRow("${AppLocalizations.of(context)!.price} (${widget.items.length} ${AppLocalizations.of(context)!.items})", "₹${widget.subtotal.toStringAsFixed(2)}"),
+          _priceRow(AppLocalizations.of(context)!.deliveryFee, AppLocalizations.of(context)!.freeDelivery, color: Colors.green),
+          _priceRow(AppLocalizations.of(context)!.tax, "₹${widget.tax.toStringAsFixed(2)}"),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Divider(thickness: 1),
@@ -337,7 +338,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Total Amount", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(AppLocalizations.of(context)!.totalAmount, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               Text("₹${widget.total.toStringAsFixed(2)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -375,7 +376,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("₹${widget.total.toStringAsFixed(2)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.textTheme.titleLarge?.color)),
-              const Text("View Details", style: TextStyle(color: Color(0xFFFB8C00), fontSize: 12, fontWeight: FontWeight.w500)),
+              Text(AppLocalizations.of(context)!.viewDetails, style: const TextStyle(color: Color(0xFFFB8C00), fontSize: 12, fontWeight: FontWeight.w500)),
             ],
           ),
           const Spacer(),
@@ -388,7 +389,7 @@ class _OrderPaymentScreenState extends State<OrderPaymentScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               elevation: 0,
             ),
-            child: const Text("PLACE ORDER", style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.placeOrder, style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

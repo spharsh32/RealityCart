@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:reality_cart/providers/theme_provider.dart';
 import 'package:reality_cart/openingphase/login_screen.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class AdminSettingsScreen extends StatefulWidget {
   const AdminSettingsScreen({super.key});
@@ -53,7 +54,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     bool confirmPasswordVisible = false;
 
     double passwordStrength = 0;
-    String strengthText = "Enter Password";
+    String strengthText = AppLocalizations.of(context)!.enterPassword;
     Color strengthColor = Colors.grey;
 
     showDialog(
@@ -74,16 +75,16 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
               setDialogState(() {
                 passwordStrength = strength;
                 if (strength <= 0.25) {
-                  strengthText = "Weak";
+                  strengthText = AppLocalizations.of(context)!.pwdWeak;
                   strengthColor = Colors.red;
                 } else if (strength <= 0.5) {
-                  strengthText = "Medium";
+                  strengthText = AppLocalizations.of(context)!.pwdMedium;
                   strengthColor = Colors.orange;
                 } else if (strength <= 0.75) {
-                  strengthText = "Good";
+                  strengthText = AppLocalizations.of(context)!.pwdGood;
                   strengthColor = Colors.blue;
                 } else {
-                  strengthText = "Strong";
+                  strengthText = AppLocalizations.of(context)!.pwdStrong;
                   strengthColor = Colors.green;
                 }
               });
@@ -111,7 +112,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
 
             return AlertDialog(
               backgroundColor: theme.dialogBackgroundColor,
-              title: const Text("Change Password"),
+              title: Text(AppLocalizations.of(context)!.changePasswordTitle),
               content: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
@@ -122,14 +123,14 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         controller: oldPasswordController,
                         obscureText: !oldPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: "Old Password",
+                          labelText: AppLocalizations.of(context)!.oldPassword,
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(oldPasswordVisible ? Icons.visibility : Icons.visibility_off),
                             onPressed: () => setDialogState(() => oldPasswordVisible = !oldPasswordVisible),
                           ),
                         ),
-                        validator: (value) => (value == null || value.isEmpty) ? "Enter old password" : null,
+                        validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.enterOldPassword : null,
                       ),
                       const SizedBox(height: 15),
                       TextFormField(
@@ -137,7 +138,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         obscureText: !newPasswordVisible,
                         onChanged: checkPasswordStrength,
                         decoration: InputDecoration(
-                          labelText: "New Password",
+                          labelText: AppLocalizations.of(context)!.newPassword,
                           prefixIcon: const Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(newPasswordVisible ? Icons.visibility : Icons.visibility_off),
@@ -145,8 +146,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) return "Enter new password";
-                          if (value.length < 8) return "Minimum 8 characters required";
+                          if (value == null || value.isEmpty) return AppLocalizations.of(context)!.enterNewPassword;
+                          if (value.length < 8) return AppLocalizations.of(context)!.min8Chars;
                           return null;
                         },
                       ),
@@ -163,23 +164,23 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         child: Text(strengthText, style: TextStyle(color: strengthColor, fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(height: 8),
-                      buildCheckItem("Minimum 8 characters", newPasswordController.text.length >= 8),
-                      buildCheckItem("1 Uppercase letter", RegExp(r'[A-Z]').hasMatch(newPasswordController.text)),
-                      buildCheckItem("1 Number", RegExp(r'[0-9]').hasMatch(newPasswordController.text)),
-                      buildCheckItem("1 Special character", RegExp(r'[!@#\$&*~]').hasMatch(newPasswordController.text)),
+                      buildCheckItem(AppLocalizations.of(context)!.min8CharsCheck, newPasswordController.text.length >= 8),
+                      buildCheckItem(AppLocalizations.of(context)!.uppercaseCheck, RegExp(r'[A-Z]').hasMatch(newPasswordController.text)),
+                      buildCheckItem(AppLocalizations.of(context)!.numberCheck, RegExp(r'[0-9]').hasMatch(newPasswordController.text)),
+                      buildCheckItem(AppLocalizations.of(context)!.specialCtrlCheck, RegExp(r'[!@#\$&*~]').hasMatch(newPasswordController.text)),
                       const SizedBox(height: 15),
                       TextFormField(
                         controller: confirmPasswordController,
                         obscureText: !confirmPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: "Confirm Password",
+                          labelText: AppLocalizations.of(context)!.confirmPassword,
                           prefixIcon: const Icon(Icons.lock_reset),
                           suffixIcon: IconButton(
                             icon: Icon(confirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
                             onPressed: () => setDialogState(() => confirmPasswordVisible = !confirmPasswordVisible),
                           ),
                         ),
-                        validator: (value) => value != newPasswordController.text ? "Passwords do not match" : null,
+                        validator: (value) => value != newPasswordController.text ? AppLocalizations.of(context)!.passwordsDoNotMatch : null,
                       ),
                     ],
                   ),
@@ -193,7 +194,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                     confirmPasswordController.dispose();
                     Navigator.pop(context);
                   },
-                  child: const Text("Cancel"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -208,13 +209,13 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         if (mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Password updated successfully!")),
+                            SnackBar(content: Text(AppLocalizations.of(context)!.pwdUpdatedSuccess)),
                           );
                         }
                       } on FirebaseAuthException catch (e) {
-                        String message = "Update failed";
+                        String message = AppLocalizations.of(context)!.updateFailed;
                         if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-                          message = "Incorrect old password";
+                          message = AppLocalizations.of(context)!.incorrectOldPwd;
                         } else if (e.message != null) {
                           message = e.message!;
                         }
@@ -228,7 +229,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                       }
                     }
                   },
-                  child: const Text("Update"),
+                  child: Text(AppLocalizations.of(context)!.update),
                 ),
               ],
             );
@@ -249,7 +250,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logout failed: $e")));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${AppLocalizations.of(context)!.logoutFailed} $e")));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -263,7 +264,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Settings", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.settingsBtn, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFB8C00),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -273,7 +274,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              _buildSectionHeader(context, "Account"),
+              _buildSectionHeader(context, AppLocalizations.of(context)!.accountLabel),
               Card(
                 color: theme.cardColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -284,7 +285,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         backgroundColor: Colors.orange,
                         child: Icon(Icons.person, color: Colors.white),
                       ),
-                      title: Text("Admin Profile", style: TextStyle(color: theme.textTheme.titleMedium?.color)),
+                      title: Text(AppLocalizations.of(context)!.adminProfile, style: TextStyle(color: theme.textTheme.titleMedium?.color)),
                       subtitle: Text(_user?.email ?? "admin@realitycart.com", style: TextStyle(color: theme.textTheme.bodySmall?.color)),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16, color: theme.disabledColor),
                       onTap: () {},
@@ -292,8 +293,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                     Divider(height: 1, color: theme.dividerColor.withOpacity(0.1)),
                     ListTile(
                       leading: Icon(Icons.lock_outline, color: theme.disabledColor),
-                      title: Text("Change Password", style: TextStyle(color: theme.textTheme.titleMedium?.color)),
-                      subtitle: Text("Verify old password to update", style: TextStyle(color: theme.textTheme.bodySmall?.color)),
+                      title: Text(AppLocalizations.of(context)!.changePasswordTitle, style: TextStyle(color: theme.textTheme.titleMedium?.color)),
+                      subtitle: Text(AppLocalizations.of(context)!.verifyOldPwdToUpdate, style: TextStyle(color: theme.textTheme.bodySmall?.color)),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16, color: theme.disabledColor),
                       onTap: _changePassword,
                     ),
@@ -301,7 +302,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 ),
               ),
               const SizedBox(height: 25),
-              _buildSectionHeader(context, "Preferences"),
+              _buildSectionHeader(context, AppLocalizations.of(context)!.preferencesLabel),
               Card(
                 color: theme.cardColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -309,7 +310,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                   children: [
                     SwitchListTile(
                       secondary: Icon(Icons.notifications_none, color: theme.disabledColor),
-                      title: Text("Notifications", style: TextStyle(color: theme.textTheme.titleMedium?.color)),
+                      title: Text(AppLocalizations.of(context)!.notificationsTitle, style: TextStyle(color: theme.textTheme.titleMedium?.color)),
                       value: _notificationsEnabled,
                       activeTrackColor: const Color(0xFFFB8C00),
                       onChanged: (value) {
@@ -320,8 +321,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                     Divider(height: 1, color: theme.dividerColor.withOpacity(0.1)),
                     ListTile(
                       leading: Icon(Icons.brightness_6, color: theme.disabledColor),
-                      title: Text("Theme Mode", style: TextStyle(color: theme.textTheme.titleMedium?.color)),
-                      subtitle: Text(_getThemeName(themeProvider.themeMode), style: TextStyle(color: theme.textTheme.bodySmall?.color)),
+                      title: Text(AppLocalizations.of(context)!.themeMode, style: TextStyle(color: theme.textTheme.titleMedium?.color)),
+                      subtitle: Text(_getThemeName(context, themeProvider.themeMode), style: TextStyle(color: theme.textTheme.bodySmall?.color)),
                       trailing: DropdownButton<ThemeMode>(
                         underline: const SizedBox(),
                         value: themeProvider.themeMode,
@@ -336,10 +337,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                             }
                           }
                         },
-                        items: const [
-                          DropdownMenuItem(value: ThemeMode.system, child: Text("System")),
-                          DropdownMenuItem(value: ThemeMode.light, child: Text("Light")),
-                          DropdownMenuItem(value: ThemeMode.dark, child: Text("Dark")),
+                        items: [
+                          DropdownMenuItem(value: ThemeMode.system, child: Text(AppLocalizations.of(context)!.systemMode)),
+                          DropdownMenuItem(value: ThemeMode.light, child: Text(AppLocalizations.of(context)!.lightModeOption)),
+                          DropdownMenuItem(value: ThemeMode.dark, child: Text(AppLocalizations.of(context)!.darkModeOption)),
                         ],
                       ),
                     ),
@@ -360,7 +361,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                   ),
                   child: _isLoading
                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.red))
-                    : const Text("Logout", style: TextStyle(fontWeight: FontWeight.bold)),
+                    : Text(AppLocalizations.of(context)!.logout, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -387,11 +388,11 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     );
   }
 
-  String _getThemeName(ThemeMode mode) {
+  String _getThemeName(BuildContext context, ThemeMode mode) {
     switch (mode) {
-      case ThemeMode.system: return "System Default";
-      case ThemeMode.light: return "Light Mode";
-      case ThemeMode.dark: return "Dark Mode";
+      case ThemeMode.system: return AppLocalizations.of(context)!.systemDefault;
+      case ThemeMode.light: return AppLocalizations.of(context)!.lightMode;
+      case ThemeMode.dark: return AppLocalizations.of(context)!.darkMode;
     }
   }
 }

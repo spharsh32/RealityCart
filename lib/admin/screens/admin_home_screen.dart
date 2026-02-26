@@ -14,7 +14,9 @@ import 'package:reality_cart/admin/screens/admin_analytics_screen.dart';
 import 'package:reality_cart/providers/admin_notification_provider.dart';
 import 'package:reality_cart/admin/providers/admin_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/providers/language_provider.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
 
@@ -41,9 +43,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          "Admin Dashboard",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.adminDashboard,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -98,6 +100,34 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               );
             },
           ),
+          Consumer<LanguageProvider>(
+            builder: (context, languageProvider, child) {
+              return PopupMenuButton<Locale>(
+                onSelected: (Locale locale) {
+                  languageProvider.changeLanguage(locale);
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    border: Border.all(color: Colors.white.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.language, size: 20, color: Colors.white),
+                ),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+                  const PopupMenuItem<Locale>(
+                    value: Locale('en'),
+                    child: Text('English'),
+                  ),
+                  const PopupMenuItem<Locale>(
+                    value: Locale('hi'),
+                    child: Text('हिंदी'),
+                  ),
+                ],
+              );
+            },
+          ),
         ],
       ),
       drawer: _buildAdminDrawer(),
@@ -111,7 +141,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Overview",
+                AppLocalizations.of(context)!.overview,
                 style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -119,14 +149,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               _buildStatsGrid(adminProvider),
               const SizedBox(height: 30),
                Text(
-                "Revenue Analysis (Last 7 Days)",
+                AppLocalizations.of(context)!.revenueAnalysis,
                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               _buildRevenueChart(adminProvider),
               const SizedBox(height: 30),
               Text(
-                "Recent Activity",
+                AppLocalizations.of(context)!.recentActivity,
                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
@@ -144,7 +174,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         },
         backgroundColor: const Color(0xFFFB8C00),
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("Add Product", style: TextStyle(color: Colors.white)),
+        label: Text(AppLocalizations.of(context)!.addProduct, style: const TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -161,10 +191,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        _buildStatCard("Total Sales", "₹${provider.totalSales.toStringAsFixed(0)}", Icons.currency_rupee, const [Color(0xFF66BB6A), Color(0xFF43A047)]),
-        _buildStatCard("Total Orders", "${provider.totalOrders}", Icons.shopping_bag, const [Color(0xFF42A5F5), Color(0xFF1E88E5)]),
-        _buildStatCard("Products", "${provider.totalProducts}", FontAwesomeIcons.box, const [Color(0xFFFFA726), Color(0xFFFB8C00)]),
-        _buildStatCard("Total Users", "${provider.totalUsers}", FontAwesomeIcons.users, const [Color(0xFFAB47BC), Color(0xFF8E24AA)]),
+        _buildStatCard(AppLocalizations.of(context)!.totalSales, "₹${provider.totalSales.toStringAsFixed(0)}", Icons.currency_rupee, const [Color(0xFF66BB6A), Color(0xFF43A047)]),
+        _buildStatCard(AppLocalizations.of(context)!.totalOrders, "${provider.totalOrders}", Icons.shopping_bag, const [Color(0xFF42A5F5), Color(0xFF1E88E5)]),
+        _buildStatCard(AppLocalizations.of(context)!.products, "${provider.totalProducts}", FontAwesomeIcons.box, const [Color(0xFFFFA726), Color(0xFFFB8C00)]),
+        _buildStatCard(AppLocalizations.of(context)!.totalUsers, "${provider.totalUsers}", FontAwesomeIcons.users, const [Color(0xFFAB47BC), Color(0xFF8E24AA)]),
       ],
     );
   }
@@ -175,7 +205,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     }
     
     if (provider.weeklyRevenueData.isEmpty) {
-       return const SizedBox(height: 200, child: Center(child: Text("No Data Available")));
+       return SizedBox(height: 200, child: Center(child: Text(AppLocalizations.of(context)!.noDataAvailable)));
     }
 
     return Container(
@@ -256,18 +286,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
-                CircleAvatar(
+              children: [
+                const CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 30,
                   child: Icon(Icons.admin_panel_settings, color: Color(0xFFFB8C00), size: 30),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "Admin Panel",
-                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                  AppLocalizations.of(context)!.adminPanel,
+                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Text(
+                const Text(
                   "admin@realitycart.com",
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
@@ -276,7 +306,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.dashboard),
-            title: const Text('Dashboard'),
+            title: Text(AppLocalizations.of(context)!.dashboard),
             selected: true,
             selectedColor: const Color(0xFFFB8C00),
             onTap: () {
@@ -285,7 +315,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           ListTile(
             leading: const Icon(FontAwesomeIcons.box),
-            title: const Text('Products'),
+            title: Text(AppLocalizations.of(context)!.products),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminProductScreen()));
@@ -293,7 +323,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.shopping_cart),
-            title: const Text('Orders'),
+            title: Text(AppLocalizations.of(context)!.ordersBtn),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminOrderScreen()));
@@ -301,7 +331,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
            ListTile(
             leading: const Icon(FontAwesomeIcons.users),
-            title: const Text('Users'),
+            title: Text(AppLocalizations.of(context)!.usersBtn),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminUserScreen()));
@@ -309,7 +339,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           ListTile(
             leading: const Icon(FontAwesomeIcons.ticket),
-            title: const Text('Coupons'),
+            title: Text(AppLocalizations.of(context)!.couponsBtn),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminCouponScreen()));
@@ -317,7 +347,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
            ListTile(
             leading: const Icon(Icons.analytics),
-            title: const Text('Reports'),
+            title: Text(AppLocalizations.of(context)!.reportsBtn),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminAnalyticsScreen()));
@@ -325,7 +355,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           ListTile(
             leading: const Icon(FontAwesomeIcons.cube),
-            title: const Text('AR Assets'),
+            title: Text(AppLocalizations.of(context)!.arAssetsBtn),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminARManagerScreen()));
@@ -334,7 +364,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: Text(AppLocalizations.of(context)!.settings),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminSettingsScreen()));
@@ -399,7 +429,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No recent activity"));
+          return Center(child: Text(AppLocalizations.of(context)!.noRecentActivity));
         }
 
         final orders = snapshot.data!.docs;
@@ -428,12 +458,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   child: const Icon(Icons.shopping_bag, color: Color(0xFFFB8C00), size: 20),
                 ),
                 title: Text(
-                  "Order #$orderId", 
+                  "${AppLocalizations.of(context)!.order} #$orderId", 
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
                 ),
-                subtitle: Text(
-                  "Status: $status",
-                  style: theme.textTheme.bodySmall,
+                subtitle: Row(
+                  children: [
+                    Text("${AppLocalizations.of(context)!.status} ", style: theme.textTheme.bodySmall),
+                    Expanded(child: TranslatedText(status, style: theme.textTheme.bodySmall)),
+                  ],
                 ),
                 trailing: Text(
                   "₹${totalAmount.toStringAsFixed(2)}", 

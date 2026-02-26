@@ -5,10 +5,13 @@ import 'package:reality_cart/providers/wishlist_provider.dart';
 import 'package:reality_cart/providers/cart_provider.dart';
 import 'package:reality_cart/user/checkout_screen.dart';
 import 'package:reality_cart/user/cart_screen.dart';
-// import 'package:reality_cart/user/ar_view_screen.dart';
+import 'package:reality_cart/user/ar_view_screen.dart';
 import 'package:reality_cart/user/wishlist_screen.dart';
 import 'package:reality_cart/models/cart_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
+import 'package:reality_cart/user/ar_view_screen.dart';
+import 'package:reality_cart/widgets/translated_text.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -53,12 +56,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return FutureBuilder<DocumentSnapshot>(
       future: _productFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Scaffold(body: Center(child: Text("Something went wrong", style: TextStyle(color: theme.textTheme.bodyMedium?.color))));
+          return Scaffold(body: Center(child: Text(AppLocalizations.of(context)?.somethingWentWrong ?? "Something went wrong", style: TextStyle(color: theme.textTheme.bodyMedium?.color))));
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,14 +69,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         }
 
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Scaffold(body: Center(child: Text("Product not found", style: TextStyle(color: theme.textTheme.bodyMedium?.color))));
+          return Scaffold(body: Center(child: Text(AppLocalizations.of(context)?.productNotFound ?? "Product not found", style: TextStyle(color: theme.textTheme.bodyMedium?.color))));
         }
 
         Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
         List<dynamic> imageUrls = data['imageUrls'] ?? [];
-        String name = data['name'] ?? "No Name";
+        String name = data['name'] ?? (AppLocalizations.of(context)?.productName ?? "Product Name");
         double price = (data['price'] ?? 0).toDouble();
-        String description = data['description'] ?? "No description available.";
+        String description = data['description'] ?? (AppLocalizations.of(context)?.noDescriptionAvailable ?? "No description available.");
         String? arModelUrl = data['arModelUrl'];
         String? firstImage = imageUrls.isNotEmpty ? imageUrls[0] : null;
 
@@ -102,13 +105,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   );
                 },
               ),
-              IconButton(
-                icon: Icon(Icons.list_alt, color: theme.iconTheme.color),
-                tooltip: 'My Wishlist',
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const WishlistScreen()));
-                },
-              ),
             ],
           ),
           body: Column(
@@ -118,43 +114,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // --- Image Carousel ---
-                      Stack(
-                        children: [
-                          Container(
-                            height: 350,
-                            width: double.infinity,
-                            color: theme.disabledColor.withOpacity(0.05),
-                            child: imageUrls.isNotEmpty
-                                ? PageView.builder(
-                                    itemCount: imageUrls.length,
-                                    onPageChanged: (index) => setState(() => _currentImageIndex = index),
-                                    itemBuilder: (context, index) {
-                                      return Hero(
-                                        tag: index == 0 ? widget.productId : 'img_${widget.productId}_$index',
-                                        child: Image.network(imageUrls[index], fit: BoxFit.contain),
-                                      );
-                                    },
-                                  )
-                                : const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
-                          ),
-/*
-                          if (arModelUrl != null && arModelUrl.isNotEmpty)
-                            Positioned(
-                              bottom: 20,
-                              right: 20,
-                              child: FloatingActionButton.small(
-                                backgroundColor: const Color(0xFFFB8C00),
-                                child: const Icon(FontAwesomeIcons.cube, color: Colors.white, size: 18),
-                                onPressed: () {
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context) => ARViewScreen(modelUrl: arModelUrl)));
+                      // --- Image Section ---
+                      Container(
+                        height: 350,
+                        width: double.infinity,
+                        color: theme.disabledColor.withOpacity(0.05),
+                        child: imageUrls.isNotEmpty
+                            ? PageView.builder(
+                                itemCount: imageUrls.length,
+                                onPageChanged: (index) => setState(() => _currentImageIndex = index),
+                                itemBuilder: (context, index) {
+                                  return Hero(
+                                    tag: index == 0 ? widget.productId : 'img_${widget.productId}_$index',
+                                    child: Image.network(imageUrls[index], fit: BoxFit.contain),
+                                  );
                                 },
-                              ),
-                            ),
-*/
-                        ],
+                              )
+                            : const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
                       ),
-                      
+
                       // Indicators
                       if (imageUrls.length > 1)
                         Padding(
@@ -177,12 +155,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
 
+                      // AR View Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              String arUrlToUse = (arModelUrl != null && arModelUrl.isNotEmpty) 
+                                  ? arModelUrl 
+                                  : "https://github.com/KhronosGroup/glTF-Sample-Models/raw/refs/heads/main/2.0/Duck/glTF-Binary/Duck.glb";
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ARViewScreen(modelUrl: arUrlToUse),
+                                ),
+                              );
+                            },
+                            icon: const Icon(FontAwesomeIcons.cube, color: Color(0xFFFB8C00), size: 20),
+                            label: Text(
+                              AppLocalizations.of(context)?.arView ?? "View in AR",
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFFFB8C00),
+                              side: const BorderSide(color: Color(0xFFFB8C00), width: 1.5),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                              TranslatedText(
                               name,
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                             ),
@@ -194,9 +204,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text(
-                                  "Inclusive of all taxes",
-                                  style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+                                Text(
+                                  AppLocalizations.of(context)?.inclusiveOfAllTaxes ?? "Inclusive of all taxes",
+                                  style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -218,25 +228,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text("2,543 ratings", style: TextStyle(color: theme.textTheme.bodySmall?.color)),
+                                Text("2,543 ${AppLocalizations.of(context)?.ratings ?? "ratings"}", style: TextStyle(color: theme.textTheme.bodySmall?.color)),
                               ],
                             ),
                             const Divider(height: 40),
-                            
+
                             // --- Delivery Info ---
-                            const Row(
+                            Row(
                               children: [
-                                Icon(Icons.local_shipping_outlined, color: Colors.grey, size: 20),
-                                SizedBox(width: 10),
-                                Text("FREE Delivery", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                                Text(" by "),
-                                Text("Tomorrow, 10 AM", style: TextStyle(fontWeight: FontWeight.bold)),
+                                const Icon(Icons.local_shipping_outlined, color: Colors.grey, size: 20),
+                                const SizedBox(width: 10),
+                                Text(AppLocalizations.of(context)?.freeDelivery ?? "FREE Delivery", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                                Text(" ${AppLocalizations.of(context)?.by ?? "by"} "),
+                                Text("${AppLocalizations.of(context)?.tomorrow ?? "Tomorrow"}, 10 AM", style: const TextStyle(fontWeight: FontWeight.bold)),
                               ],
                             ),
                             const Divider(height: 40),
 
                             // --- Variants ---
-                            Text("Select Size", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.titleMedium?.color)),
+                            Text(AppLocalizations.of(context)?.selectSize ?? "Select Size", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.titleMedium?.color)),
                             const SizedBox(height: 12),
                             Row(
                               children: List.generate(_sizes.length, (index) {
@@ -264,9 +274,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                             const SizedBox(height: 25),
 
-                            Text("Description", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.titleMedium?.color)),
+                            Text(AppLocalizations.of(context)?.description ?? "Description", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.titleMedium?.color)),
                             const SizedBox(height: 10),
-                            Text(
+                            TranslatedText(
                               description,
                               style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8), height: 1.5),
                             ),
@@ -277,8 +287,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ),
               ),
-              
-              // --- Sticky Bottom Bar (Flipkart Style) ---
+
+              // --- Sticky Bottom Bar ---
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 decoration: BoxDecoration(
@@ -292,21 +302,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         child: OutlinedButton(
                           onPressed: () {
                             Provider.of<CartProvider>(context, listen: false).addToCart(
-                              widget.productId, 
-                              name, 
-                              price, 
-                              _sizes[_selectedSize], 
+                              widget.productId,
+                              name,
+                              price,
+                              _sizes[_selectedSize],
                               _selectedColor,
                               imageUrl: firstImage,
                             );
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen()));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Added to Cart"),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
                           },
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             side: const BorderSide(color: Color(0xFFFB8C00)),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                           ),
-                          child: const Text("ADD TO CART", style: TextStyle(color: Color(0xFFFB8C00), fontWeight: FontWeight.bold)),
+                          child: Text(AppLocalizations.of(context)?.addToCart ?? "ADD TO CART", style: const TextStyle(color: Color(0xFFFB8C00), fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -337,7 +352,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                             elevation: 0,
                           ),
-                          child: const Text("BUY NOW", style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(AppLocalizations.of(context)?.buyNow ?? "BUY NOW", style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ],

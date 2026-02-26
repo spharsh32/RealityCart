@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -88,7 +89,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         const Icon(Icons.lock_reset, size: 80, color: Color(0xFFFB8C00)),
                         const SizedBox(height: 16),
                         Text(
-                          "Forgot Password",
+                          AppLocalizations.of(context)!.forgotPassword,
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -98,7 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "Enter your email associated with your account and we'll send an email with instructions to reset your password.",
+                    AppLocalizations.of(context)!.enterEmailToReset,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
@@ -112,7 +113,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: "Email Address",
+                      labelText: AppLocalizations.of(context)!.emailAddress,
                       prefixIcon: const Icon(Icons.email_outlined),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -141,7 +142,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: _isLoading 
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Send Instructions", style: TextStyle(fontSize: 16)),
+                        : Text(AppLocalizations.of(context)!.sendInstructions, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                 ],

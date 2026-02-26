@@ -80,6 +80,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: const [
             Locale('en'), // English
             Locale('hi'), // Hindi
+            Locale('gu'), // Gujarati
           ],
           debugShowCheckedModeBanner: false,
           builder: DevicePreview.appBuilder,

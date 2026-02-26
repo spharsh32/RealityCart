@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reality_cart/admin/screens/admin_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reality_cart/l10n/app_localizations.dart';
 
 
 class AdminLoginScreen extends StatefulWidget {
@@ -69,7 +70,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin Portal", style: TextStyle(color: Colors.white)),
+        title: Text(AppLocalizations.of(context)!.adminPortal, style: const TextStyle(color: Colors.white)),
         backgroundColor: orangeColor,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -90,7 +91,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  "Admin Login",
+                  AppLocalizations.of(context)!.adminLogin,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -98,7 +99,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Please enter your credentials",
+                  AppLocalizations.of(context)!.pleaseEnterCredentials,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
@@ -110,7 +111,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 TextFormField(
                   controller: _adminIdController,
                   decoration: InputDecoration(
-                    labelText: "Admin ID",
+                    labelText: AppLocalizations.of(context)!.adminId,
                     prefixIcon: const Icon(Icons.badge_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -130,7 +131,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
-                    labelText: "Password",
+                    labelText: AppLocalizations.of(context)!.password,
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -171,7 +172,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Login", style: TextStyle(fontSize: 16)),
+                        : Text(AppLocalizations.of(context)!.login, style: const TextStyle(fontSize: 16)),
                   ),
                 ),
               ],
